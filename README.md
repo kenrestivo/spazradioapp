@@ -4,7 +4,7 @@ A radio listening app for the [SPAZ streaming radio station](http://spaz.org), w
 
 ## Obtaining
 
-You can download/run [the most recent binary release here](http://spaz.org/~ken/spazradio.apk)
+You can download/run [the most recent binary release here](http://spaz.org/~ken/spazradio.apk).
 
 ## Building
 
