@@ -1,0 +1,20 @@
+*~
+*.class
+*.dex
+*.apk
+bin/
+*.keystore
+local.properties
+gen/
+*jar
+workspace.xml
+uiDesigner.xml
+encodings.xml
+out/
+Project\ Docs
+*.so
+*.o.d
+*.o
+.#*
+assets/
+target/

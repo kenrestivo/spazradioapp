@@ -1,4 +1,4 @@
-package org.restivo.droidtest;
+package org.spaz.radio;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import clojure.lang.Symbol;
 import clojure.lang.Var;
 import clojure.lang.RT;
 
-import org.restivo.droidtest.R;
+import org.spaz.radio.R;
 
 public class SplashActivity extends Activity {
 
@@ -46,7 +46,7 @@ public class SplashActivity extends Activity {
     }
 
     public void proceed() {
-        startActivity(new Intent("org.restivo.droidtest.MAIN"));
+        startActivity(new Intent("org.spaz.radio.MAIN"));
         finish();
     }
 
@@ -62,9 +62,9 @@ public class SplashActivity extends Activity {
                     INIT.invoke(SplashActivity.this.getApplication());
 
                     try {
-                        Class.forName("org.restivo.droidtest.TestDroid5");
+                        Class.forName("org.spaz.radio.Player");
                     } catch (ClassNotFoundException e) {
-                        Log.e(TAG, "Failed loading TestDroid5", e);
+                        Log.e(TAG, "Failed loading Player", e);
                     }
 
                     proceed();
