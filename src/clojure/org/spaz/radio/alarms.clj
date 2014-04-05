@@ -6,6 +6,7 @@
             [neko.resource :as r]
             [neko.context :as context]
             [neko.find-view :as view]
+            [utilza.android :as utilza]
             [neko.listeners.view :as lview]
             [neko.data :as data]
             [neko.doc :as doc]
@@ -31,22 +32,6 @@
 
 
 
-
-(defn periodic
-  "copy/paste from utilza"
-  [f interval name]
-  (let [ht  (-> name
-                HandlerThread.
-                (doto .start))
-        h (-> ht
-              .getLooper
-              Handler.)]
-    (letfn [(hf [] (f) (.postDelayed h hf interval) )]
-      (.postDelayed h hf interval))
-    ;; return the thread
-    ht))
-
-
 (defn cancel-alarm
   []
   (swap! alarm-handler (fn [h] (and h (.quit h)) nil)))
@@ -56,7 +41,7 @@
   [handler]
   (if (and handler (.isAlive handler))
     handler
-    (periodic playing/playing! refresh-interval "Alarm")))
+    (utilza/periodic playing/playing! refresh-interval "Alarm")))
 
 
 

@@ -4,6 +4,7 @@
             [neko.context :as context]
             [neko.find-view :as view]
             [neko.notify :as notify]
+            [utilza.android :as utilza]
             [net.clandroid.service :as service]
             [neko.resource :as r]
             [neko.log :as log]
@@ -62,24 +63,8 @@
   (notify/fire playing-service-id (notification context text)))
 
 
-(defn start-activity
-  "moved to utilza"
-  [^String pkg-name activity-name]
-  (.startActivity context/context
-                  (doto (Intent.)
-                    (.setAction Intent/ACTION_MAIN)
-                    (.addFlags Intent/FLAG_ACTIVITY_NEW_TASK)
-                    (.setComponent  (ComponentName. pkg-name (str pkg-name "." activity-name))))))
 
 
-(defn get-version-info
-  "copy/paste from utilza"
-  [^String package-name]
-  (let [pi (-> context/context
-               .getPackageManager
-               (.getPackageInfo package-name 0))]
-    {:version-name (.versionName pi)
-     :version-number (.versionCode pi)}))
 
 (defn force-top-level-redraw
   "XXX miserable hack. do not know why this is necessary?"
@@ -96,7 +81,7 @@
 
 
 
-  (get-version-info package-name)
+  (utilza/get-version-info package-name)
   
   
 
