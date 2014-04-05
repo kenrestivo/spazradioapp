@@ -13,7 +13,7 @@
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
   :dependencies [[org.clojure-android/clojure "1.5.1-jb" :use-resources true]
                  [neko/neko "3.0.0"]
-                 [utilza "0.1.52"]
+                 [utilza "0.1.53"]
                  [cheshire "5.3.0"]]
   :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
                                   [clojure-complete "0.2.3"]
