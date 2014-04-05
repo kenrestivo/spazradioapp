@@ -10,6 +10,7 @@
             [neko.ui :as ui :refer [make-ui]])
   (:import android.media.MediaPlayer
            android.content.ComponentName
+           android.view.View
            android.content.pm.PackageInfo
            android.content.Intent))
 
@@ -80,7 +81,16 @@
     {:version-name (.versionName pi)
      :version-number (.versionCode pi)}))
 
-
+(defn force-top-level-redraw
+  "XXX miserable hack. do not know why this is necessary?"
+  [^android.view.View v]
+  (.invalidate v)
+  (-> v
+      .getParent
+      .getParent
+      .getParent
+      .getParent
+      .invalidate))
 
 (comment
 

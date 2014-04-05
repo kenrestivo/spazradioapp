@@ -25,16 +25,6 @@
 
 (declare stop-player) ;; because start-player needs it.
 
-(defn force-top-level-redraw
-  "XXX miserable hack. do not know why this is necessary?"
-  [^android.view.View v]
-  (.invalidate v)
-  (-> v
-      .getParent
-      .getParent
-      .getParent
-      .getParent
-      .invalidate))
 
 
 (defn get-view
@@ -49,7 +39,7 @@
   (on-ui
    (doto (get-view k)
      (.setText s)
-     force-top-level-redraw)))
+     utils/force-top-level-redraw)))
 
 
 
@@ -61,7 +51,7 @@
   [^android.app.Activity this ^android.view.View v]
   (doto v
     (.setText "Stop")
-    force-top-level-redraw
+    utils/force-top-level-redraw
     (.setOnClickListener (lview/on-click-call (partial stop-player this))))
   (services/start-service-unbound this utils/player-service-name))
 
@@ -71,7 +61,7 @@
   [^android.app.Activity this ^android.view.View v]
   (doto v
     (.setText "Listen")
-    force-top-level-redraw
+    utils/force-top-level-redraw
     (.setOnClickListener (lview/on-click-call (partial start-player this))))
   (->> [:broadcast utils/end-service-signal]
        notify/construct-pending-intent
