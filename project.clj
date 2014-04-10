@@ -18,7 +18,27 @@
   :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
                                   [clojure-complete "0.2.3"]
                                   [compliment "0.0.3"]]
-                   :android {:aot :all-with-unused}}
+                   :android {:aot :all-with-unused ;; insane in the membrane, but needed for nrepl to work
+                             :aot-exclude-ns [clojure.parallel
+                                              clojure.core.reducers
+                                              ;; required just to cherrypick one lib from utilza
+                                              utilza.base32
+                                              utilza.noir.future
+                                              utilza.noir.misc
+                                              utilza.noir.session
+                                              utilza.clutch
+                                              utilza.datomic
+                                              utilza.hiccupy
+                                              utilza.log
+                                              utilza.pom
+                                              utilza.http
+                                              utilza.json
+                                              utilza.zip
+                                              utilza.memdb.file
+                                              utilza.java
+                                              utilza.qrcode
+                                              utilza.postgres
+                                              utilza.ring]}}
              :release {:android
                        {;; Specify the path to your private keystore
                         ;; and the the alias of the key you want to

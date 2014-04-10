@@ -23,7 +23,9 @@
 
 (defonce mp (atom nil))
 
+;; TODO: move to settings
 (defonce datasource (atom "http://spazradio.bamfic.com:8050/radio"))
+
 (defonce last-pos (atom 0))
 
 (declare assure-mp start clear release-lock)
@@ -163,13 +165,9 @@
 
 
 (comment
-  ;; for mocking
-
-  (def fake-server "192.168.0.46")
-  (def fake-server "192.168.43.169")
 
 
-  (reset! datasource (str "http://" fake-server ":8000/stream"))
-  (reset! datasource (str "http://" fake-server "/test.ogg"))
+  (reset! datasource (str "http://" utils/fake-server ":8000/stream"))
+  (reset! datasource (str "http://" utils/fake-server "/test.ogg"))
   
   )

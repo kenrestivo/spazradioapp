@@ -119,6 +119,7 @@
                      (.setSingleLine true))
                 (set-playing-button this))
                (add-watch playing/last-playing ::player refresh-playing)
+               ;; TODO: add-watch for schedule too
                (future (playing/playing!))
                ;; it'll only get started once, so no need to check here
                (swap! utils/needs-alarm conj ::player)
@@ -126,6 +127,7 @@
   
   :on-stop (fn [this]
              (remove-watch playing/last-playing ::player)
+             ;; TODO: remove-watch for schedule too
              (swap! utils/needs-alarm disj ::player)
              (->> [:broadcast utils/end-alarm-signal]
                   notify/construct-pending-intent
@@ -135,6 +137,7 @@
   :on-resume (fn [this]
                (swap! utils/needs-alarm conj ::player)
                (add-watch playing/last-playing ::player refresh-playing)
+               ;; TODO: add-watch for schedule too
                (future (playing/playing!))))
 
 

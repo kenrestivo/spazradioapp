@@ -82,7 +82,13 @@
 
 
   (utilza/get-version-info package-name)
-  
+
+
+    ;; for mocking
+
+  (def fake-server "192.168.0.46")
+  (def fake-server "192.168.43.169")
+
   
 
   )

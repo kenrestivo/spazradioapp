@@ -11,6 +11,7 @@
 
 (defonce last-playing (atom "checking..."))
 
+;; TODO: move to settings
 (defonce playing-url (atom "http://spazradio.bamfic.com/playing"))
 
 (def icy-keys #{:icy-aim
@@ -103,15 +104,12 @@
 
   ;; functional tests, needs a working mock server
 
-  (def fake-server "192.168.0.46")
-  (def fake-server "192.168.43.169")
-
   
-  (reset! playing-url (str "http://" fake-server "/playing-logs/playing-spukkin"))
-  (reset! playing-url (str "http://" fake-server "/playing-logs/playing-blank"))
-  (reset! playing-url (str "http://" fake-server "/playing-logs/playing-archive"))
+  (reset! playing-url (str "http://" utils/fake-server "/playing-logs/playing-spukkin"))
+  (reset! playing-url (str "http://" utils/fake-server "/playing-logs/playing-blank"))
+  (reset! playing-url (str "http://" utils/fake-server "/playing-logs/playing-archive"))
 
-  (reset! playing-url (str "http://" fake-server "/playing-logs/nowhere-nothing-none"))
+  (reset! playing-url (str "http://" utils/fake-server "/playing-logs/nowhere-nothing-none"))
 
 
   ;; check the values
