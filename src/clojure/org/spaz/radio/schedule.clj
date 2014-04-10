@@ -20,6 +20,8 @@
 ;; TODO: move to settings
 (defonce schedule-url (atom "http://spazradio.bamfic.com/api/week-info"))
 
+;; the server supplying the json with the schedule
+;; is assumed to always at least pretend to be on the west coast of the usa.
 (def read-df
   (doto (SimpleDateFormat. "yyyy-MM-dd HH:mm", Locale/US)
     (.setTimeZone (TimeZone/getTimeZone "America/Los_Angeles"))))
@@ -34,7 +36,7 @@
 
 
 (defn fix-record
-  "Takes a single record map for a show,
+  "Takes a single map for a show,
     returns a map of the properly formatted data"
   [m]
   (utilza/munge-columns colfixes
@@ -43,12 +45,12 @@
 
 
 (defn parse-weekly
-  "Takes vector of vectors of records, outputs formatted, sorted schedule as seq of maps"
+  "Takes vector of vectors of maps, outputs formatted, sorted schedule as seq of maps"
   [xs]
   (->> xs
        vals
-       (filter vector?)
-       (apply concat)
+       (filter vector?) ;; elimnate the api version, which is a string and in the way
+       (apply concat) ;; squash all the days together
        (map fix-record)
        (sort-by :start_timestamp)))
 
@@ -63,6 +65,7 @@
        (zipmap [:current :future])))
 
 
+;; TODO: instead of getDefault, pull the locale out of android system settings
 (def output-long-date-instance (SimpleDateFormat/getDateInstance SimpleDateFormat/FULL (Locale/getDefault)))
 (def output-short-date-instance (SimpleDateFormat. "EEEE" (Locale/getDefault)))
 (def output-time-instance (SimpleDateFormat/getTimeInstance SimpleDateFormat/SHORT (Locale/getDefault)))
@@ -76,14 +79,14 @@
 
 (defn fetch-schedule
   ([^java.lang.String url]
-  (try
-    (some-> url
-            slurp
-            (json/decode true)
-            parse-weekly)
-    (catch Exception e
-      (log/e e)
-      "formatting error, checking again...")))
+     (try
+       (some-> url
+               slurp
+               (json/decode true)
+               parse-weekly)
+       (catch Exception e
+         (log/e e)
+         "formatting error, checking again...")))
   ([]
      (fetch-schedule @schedule-url)))
 
@@ -92,7 +95,7 @@
 
 ;; ugly but it works
 (defn update-schedule-fn
-  "Takes a URL and a (current) #inst, and returns a function
+  "Takes a URL and a current #inst, and returns a function
    which takes the old schedule atom and updates the future/current and last-started,
    and goes out and fetches a new schedule if a new show has started since last check."
   [^java.lang.String url ^java.util.Date d]
@@ -100,21 +103,14 @@
     (let [{:keys [current future] :as new-sched} (->> (concat current future) ;; rejoining for resplitting
                                                       (split-by-current d))
           new-last-started (-> current last :start_timestamp)]
-      (-> (if (and last-started ;; could be nil if app just started up?
-                   (.after last-started new-last-started))
+      (-> (if (or (and last-started ;; could be nil if app just started up?
+                       (.after last-started new-last-started))
+                  (nil? last-started)) ;; nothing loaded yet, or no shows yet.
             (or (some->> url fetch-schedule  (split-by-current d))
                 new-sched) ;; in case it fails
             new-sched)
           (assoc :last-started new-last-started)))))
 
-(defn init-schedule!
-  ([^java.lang.String url]
-  (->> url
-       fetch-schedule
-       (split-by-current (java.util.Date.))
-       (reset! schedule)))
-  ([]
-     (init-schedule! @schedule-url)))
 
 
 (defn update-schedule!
@@ -140,6 +136,10 @@
   (fetch-schedule)
   
   (init-schedule!)
+
+  (reset! schedule {:current []
+                    :future []
+                    :last-started nil})
   
   ;; check that the atom is being updated properly.
   (update-schedule!)

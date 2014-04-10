@@ -13,6 +13,7 @@
             [neko.debug :as debug]
             [org.spaz.radio.player :as player]
             [org.spaz.radio.playing :as playing]
+            [org.spaz.radio.schedule :as schedule]
             [org.spaz.radio.utils :as utils]
             [neko.log :as log]
             [neko.ui :as ui :refer [make-ui]])
@@ -37,11 +38,16 @@
   (swap! alarm-handler (fn [h] (and h (.quit h)) nil)))
 
 
+(defn update-periodic-items!
+  []
+  (playing/playing!)
+  (schedule/update-schedule!))
+
 (defn assure-handler
   [handler]
   (if (and handler (.isAlive handler))
     handler
-    (utilza/periodic playing/playing! refresh-interval "Alarm")))
+    (utilza/periodic update-periodic-items! refresh-interval "Alarm")))
 
 
 
