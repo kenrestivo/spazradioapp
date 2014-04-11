@@ -103,7 +103,7 @@
    (fn [] [:text-view {}])
    (fn [_ view _ show]
      (on-ui
-      (.setText ^android.widget.TextView view (format-show show)))) 
+      (.setText ^android.widget.TextView view (format-show show))))
    schedule/schedule
    #(or (:future %) [])))
 
@@ -114,10 +114,10 @@
                       [:text-view {:text "checking..."
                                    :id ::playing-text
                                    :single-line true}]
-                      [:text-view {:text ""
-                                   :id  ::status-text}]
                       [:button {:text "Configuring"
                                 :id ::playing-button}]
+                      [:text-view {:text ""
+                                   :id  ::status-text}]
                       [:text-view {:text "Upcoming Shows"
                                    :id ::upcoming-header}]
                       [:list-view {:id ::schedule}]])
