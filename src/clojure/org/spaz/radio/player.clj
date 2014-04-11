@@ -88,6 +88,7 @@
 
 (defn format-show
   [show]
+  {:pre [(-> show nil? not)]}
   (let [{:keys [name url start_timestamp end_timestamp]} (utilza/munge-columns display-colfixes show)]
     ;; TODO: return some kind of map maybe?
     ;; TODO: maybe if there's an url, make the show clickable
@@ -104,7 +105,7 @@
      (on-ui
       (.setText view (format-show show)))) ;; TODO: typehint
    schedule/schedule
-   :future))
+   #(or (:future %) [])))
 
 (def playing-layout* [:linear-layout {:orientation :vertical,
                                       :id-holder true,
