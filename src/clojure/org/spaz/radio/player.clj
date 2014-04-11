@@ -103,7 +103,7 @@
    (fn [] [:text-view {}])
    (fn [_ view _ show]
      (on-ui
-      (.setText view (format-show show)))) ;; TODO: typehint
+      (.setText ^android.widget.TextView view (format-show show)))) 
    schedule/schedule
    #(or (:future %) [])))
 
@@ -112,7 +112,8 @@
                                       :def `playing-layout}
                       [:text-view {:text "Now Playing:"}]
                       [:text-view {:text "checking..."
-                                   :id ::playing-text}]
+                                   :id ::playing-text
+                                   :single-line true}]
                       [:text-view {:text ""
                                    :id  ::status-text}]
                       [:button {:text "Configuring"
@@ -143,10 +144,6 @@
                 (->> playing-layout*
                      make-ui
                      (set-content-view! this))
-                ;; XXX hack. figure out how to do it with layoutparams instead?
-                (->  ::playing-text
-                     get-view
-                     (.setSingleLine true))
                 (set-playing-button this))
                (add-watch playing/last-playing ::player refresh-playing)
                (future (playing/playing!))
