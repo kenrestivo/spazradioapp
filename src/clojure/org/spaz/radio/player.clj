@@ -53,6 +53,7 @@
     (.setText "Stop")
     utils/force-top-level-redraw
     (.setOnClickListener (lview/on-click-call (partial stop-player this))))
+  (set-text! ::status-text "Connecting...")
   (services/start-service-unbound this utils/player-service-name))
 
 
@@ -122,10 +123,11 @@
                       [:text-view {:text "checking..."
                                    :id ::playing-text
                                    :single-line true}]
-                      [:button {:text "Configuring"
-                                :id ::playing-button}]
-                      [:text-view {:text ""
-                                   :id  ::status-text}]
+                      [:linear-layout {:orientation :horizontal}
+                       [:button {:text "Configuring"
+                                 :id ::playing-button}]
+                       [:text-view {:text ""
+                                   :id  ::status-text}]]
                       [:text-view {:text "Upcoming Shows"
                                    :id ::upcoming-header}]
                       [:list-view {:id ::schedule}]])
