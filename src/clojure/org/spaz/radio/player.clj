@@ -5,12 +5,15 @@
             [net.clandroid.service :as services]
             [neko.resource :as r]
             [neko.context :as context]
+            [utilza.misc :as utilza]
             [neko.find-view :as view]
             [neko.listeners.view :as lview]
+            [neko.ui.adapters :as adapters]
             [neko.data :as data]
             [neko.doc :as doc]
             [neko.debug :as debug]
             [org.spaz.radio.playing :as playing]
+            [org.spaz.radio.schedule :as schedule]
             [org.spaz.radio.utils :as utils]
             [org.spaz.radio.service :as service]
             [neko.log :as log]
@@ -80,6 +83,26 @@
       (set-playing! new))))
 
 
+(def display-colfixes {:start_timestamp schedule/output-datetime-format
+                       :end_timestamp schedule/output-datetime-format})
+
+(defn format-show
+  [show]
+  (let [{:keys [name url start_timestamp end_timestamp]} (utilza/munge-columns display-colfixes show)]
+    ;; TODO: return some kind of map maybe?
+    (format "%s - %s\n%s" start_timestamp end_timestamp name)))
+
+
+
+(defn schedule-adapter []
+  (adapters/ref-adapter
+   (fn [] [:text-view {}])
+   (fn [_ view _ show]
+     (on-ui
+      (.setText view (format-show show)))) ;; TODO: typehint
+   schedule/schedule
+   :future))
+
 (def playing-layout* [:linear-layout {:orientation :vertical,
                                       :id-holder true,
                                       :def `playing-layout}
@@ -89,7 +112,10 @@
                       [:text-view {:text ""
                                    :id  ::status-text}]
                       [:button {:text "Configuring"
-                                :id ::playing-button}]])
+                                :id ::playing-button}]
+                      [:text-view {:text "Upcoming Shows"
+                                   :id ::upcoming-header}]
+                      [:list-view {:id ::schedule}]])
 
 
 (defn set-playing-button
@@ -119,15 +145,17 @@
                      (.setSingleLine true))
                 (set-playing-button this))
                (add-watch playing/last-playing ::player refresh-playing)
-               ;; TODO: add-watch for schedule too
+               (-> ::schedule
+                   get-view
+                   (ui/config :adapter (schedule-adapter)))
                (future (playing/playing!))
+               (future (schedule/update-schedule!))
                ;; it'll only get started once, so no need to check here
                (swap! utils/needs-alarm conj ::player)
                (services/start-service-unbound this utils/alarm-service-name))
   
   :on-stop (fn [this]
              (remove-watch playing/last-playing ::player)
-             ;; TODO: remove-watch for schedule too
              (swap! utils/needs-alarm disj ::player)
              (->> [:broadcast utils/end-alarm-signal]
                   notify/construct-pending-intent
@@ -137,8 +165,8 @@
   :on-resume (fn [this]
                (swap! utils/needs-alarm conj ::player)
                (add-watch playing/last-playing ::player refresh-playing)
-               ;; TODO: add-watch for schedule too
-               (future (playing/playing!))))
+               (future (playing/playing!))
+               (future (schedule/update-schedule!))))
 
 
 
@@ -157,6 +185,21 @@
 
   )
 
+(comment
+
+  (->> @schedule/schedule
+       :future
+       first
+       format-show)
+  
+  (debug/safe-for-ui
+   (on-ui
+    (-> ::schedule
+        get-view
+        (ui/config :adapter (schedule-adapter)))))
+
+  
+  )
 
 (comment
 

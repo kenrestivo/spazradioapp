@@ -8,6 +8,7 @@
 
   :global-vars {*warn-on-reflection* true}
 
+  :plugins [[lein-droid "0.2.2"]]
   :source-paths ["src/clojure" "src"]
   :java-source-paths ["src/java" "gen"]
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
@@ -18,27 +19,7 @@
   :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
                                   [clojure-complete "0.2.3"]
                                   [compliment "0.0.3"]]
-                   :android {:aot :all-with-unused ;; insane in the membrane, but needed for nrepl to work
-                             :aot-exclude-ns [clojure.parallel
-                                              clojure.core.reducers
-                                              ;; required just to cherrypick one lib from utilza
-                                              utilza.base32
-                                              utilza.noir.future
-                                              utilza.noir.misc
-                                              utilza.noir.session
-                                              utilza.clutch
-                                              utilza.datomic
-                                              utilza.hiccupy
-                                              utilza.log
-                                              utilza.pom
-                                              utilza.http
-                                              utilza.json
-                                              utilza.zip
-                                              utilza.memdb.file
-                                              utilza.java
-                                              utilza.qrcode
-                                              utilza.postgres
-                                              utilza.ring]}}
+                   :android {:aot :all-with-unused}} ;; nrepl doesn't work without it
              :release {:android
                        {;; Specify the path to your private keystore
                         ;; and the the alias of the key you want to
@@ -61,4 +42,25 @@
             
             :support-libraries ["v13"] ;; needed for localbroadcast
             :target-version "14"
-            :aot-exclude-ns ["clojure.parallel" "clojure.core.reducers"]})
+            :aot-exclude-ns [clojure.parallel
+                             clojure.core.reducers
+                             ;; required just to cherrypick one lib from utilza
+                             utilza.base32
+                             utilza.noir.future
+                             utilza.noir.misc
+                             utilza.noir.session
+                             utilza.clutch
+                             utilza.datomic
+                             utilza.hiccupy
+                             utilza.log
+                             utilza.pom
+                             utilza.http
+                             utilza.json
+                             utilza.zip
+                             utilza.memdb.file
+                             utilza.java
+                             utilza.qrcode
+                             utilza.postgres
+                             utilza.ring]})
+
+
