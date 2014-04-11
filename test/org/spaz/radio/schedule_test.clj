@@ -22,3 +22,12 @@
   
   
   )
+
+(comment
+
+  (.format  (SimpleDateFormat. "EEEE" (Locale/getDefault)) (java.util.Date.))
+
+
+  (.format (SimpleDateFormat/getDateInstance SimpleDateFormat/DEFAULT (Locale/getDefault)) (java.util.Date.))
+  
+  )

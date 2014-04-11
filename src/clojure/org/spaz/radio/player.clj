@@ -90,7 +90,7 @@
   [show]
   (let [{:keys [name url start_timestamp end_timestamp]} (utilza/munge-columns display-colfixes show)]
     ;; TODO: return some kind of map maybe?
-    (format "%s - %s\n%s" start_timestamp end_timestamp name)))
+    (format "%s\n%s -\n%s" name start_timestamp end_timestamp)))
 
 
 
