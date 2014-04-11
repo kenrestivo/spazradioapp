@@ -90,6 +90,7 @@
   [show]
   (let [{:keys [name url start_timestamp end_timestamp]} (utilza/munge-columns display-colfixes show)]
     ;; TODO: return some kind of map maybe?
+    ;; TODO: maybe if there's an url, make the show clickable
     (format "%s\n%s -\n%s" name start_timestamp end_timestamp)))
 
 
