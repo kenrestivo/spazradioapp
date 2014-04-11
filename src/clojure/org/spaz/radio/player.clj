@@ -149,11 +149,13 @@
                      (.setSingleLine true))
                 (set-playing-button this))
                (add-watch playing/last-playing ::player refresh-playing)
-               (-> ::schedule
-                   get-view
-                   (ui/config :adapter (schedule-adapter)))
                (future (playing/playing!))
-               (future (schedule/update-schedule!))
+               (future
+                 (schedule/update-schedule!)
+                 (on-ui
+                  (-> ::schedule
+                      get-view
+                      (ui/config :adapter (schedule-adapter)))))
                ;; it'll only get started once, so no need to check here
                (swap! utils/needs-alarm conj ::player)
                (services/start-service-unbound this utils/alarm-service-name))
