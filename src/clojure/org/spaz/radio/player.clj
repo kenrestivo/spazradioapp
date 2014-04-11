@@ -91,6 +91,8 @@
   (let [{:keys [name url start_timestamp end_timestamp]} (utilza/munge-columns display-colfixes show)]
     ;; TODO: return some kind of map maybe?
     ;; TODO: maybe if there's an url, make the show clickable
+    ;; TODO: this really wants to be a custom horiz listview with the dates on the left
+    ;;       and the shows on the right, with the shows in a different font/color than the dates, etc.
     (format "%s\n%s -\n%s" name start_timestamp end_timestamp)))
 
 
