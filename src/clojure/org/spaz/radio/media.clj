@@ -6,7 +6,6 @@
             [neko.context :as context]
             [cheshire.core :as json]
             [org.spaz.radio.utils :as utils]
-            [org.spaz.radio.playing :as playing]
             [neko.log :as log]
             [neko.ui :as ui :refer [make-ui]])
   (:import android.media.MediaPlayer
@@ -27,6 +26,8 @@
 (defonce datasource (atom "http://spazradio.bamfic.com:8050/radio"))
 
 (defonce last-pos (atom 0))
+
+(defonce status (atom ""))
 
 (declare assure-mp start clear release-lock)
 
@@ -93,9 +94,9 @@
        (reify android.media.MediaPlayer$OnPreparedListener
          (onPrepared [this mp]
            (log/i "prepared" (.getCurrentPosition mp))
+           (reset! status "Connected")
            (.setVolume mp 1.0 1.0)
            (setup-ducking)
-           ;;(future (utils/renotify context/context @playing/last-playing)) ;; XXX unnecessary??
            (.start mp))))
 
       (.setOnBufferingUpdateListener 
@@ -108,13 +109,14 @@
        (reify android.media.MediaPlayer$OnCompletionListener
          (onCompletion [this mp]
            (log/i "lost connection" (.getCurrentPosition mp))
-           ;;(future (utils/renotify context/context "Disconnected, reconnecting..."))
+           (reset! status "Disconnected, reconnecting...")
            (clear)
            (start))))
       
       (.setOnSeekCompleteListener 
        (reify android.media.MediaPlayer$OnSeekCompleteListener
          (onSeekComplete [this mp]
+           ;;(reset! status "Done seeking")
            (log/i "seek complete" (.getCurrentPosition mp))
            )))
 
@@ -129,7 +131,7 @@
        (reify android.media.MediaPlayer$OnInfoListener
          (onInfo [this mp what extra]
            (let [m (decode-error what)]
-             ;;(future (some->> m (utils/renotify context/context)))
+             (reset! status m)
              (log/i "info" m what extra (.getCurrentPosition mp)))
            false))) ;; let others handle it
 

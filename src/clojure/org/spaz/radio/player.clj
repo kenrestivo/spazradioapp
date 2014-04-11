@@ -12,6 +12,7 @@
             [neko.data :as data]
             [neko.doc :as doc]
             [neko.debug :as debug]
+            [org.spaz.radio.media :as media]
             [org.spaz.radio.playing :as playing]
             [org.spaz.radio.schedule :as schedule]
             [org.spaz.radio.utils :as utils]
@@ -46,10 +47,6 @@
 
 
 
-(def set-playing!
-  (partial set-text! ::playing-text))
-
-
 (defn start-player
   [^android.app.Activity this ^android.view.View v]
   (doto v
@@ -66,6 +63,7 @@
     (.setText "Listen")
     utils/force-top-level-redraw
     (.setOnClickListener (lview/on-click-call (partial start-player this))))
+  (set-text! ::status-text "")
   (->> [:broadcast utils/end-service-signal]
        notify/construct-pending-intent
        .send ;; have to use send not sendbroadcast?
@@ -80,7 +78,17 @@
                           get-view
                           .getText))
       (log/d "updating activity view" new)
-      (set-playing! new))))
+      (set-text! ::playing-text new))))
+
+
+(defn refresh-status
+  [k r old new]
+  (future
+    (when-not (= new (->> ::status-text
+                          get-view
+                          .getText))
+      (log/d "updating activity view" new)
+      (set-text! ::status-text new))))
 
 
 (def display-colfixes {:start_timestamp schedule/output-datetime-format
@@ -146,6 +154,7 @@
                      (set-content-view! this))
                 (set-playing-button this))
                (add-watch playing/last-playing ::player refresh-playing)
+               (add-watch media/status ::player refresh-status)
                (future (playing/playing!))
                (future
                  (schedule/update-schedule!)
@@ -159,6 +168,7 @@
   
   :on-stop (fn [this]
              (remove-watch playing/last-playing ::player)
+             (remove-watch media/status ::player)
              (swap! utils/needs-alarm disj ::player)
              (->> [:broadcast utils/end-alarm-signal]
                   notify/construct-pending-intent
@@ -168,6 +178,7 @@
   :on-resume (fn [this]
                (swap! utils/needs-alarm conj ::player)
                (add-watch playing/last-playing ::player refresh-playing)
+               (add-watch media/status ::player refresh-status)
                (future (playing/playing!))
                (future (schedule/update-schedule!))))
 
