@@ -40,7 +40,7 @@
             ;; If previous option didn't work, uncomment this as well.
             ;; :force-dex-optimize true
             
-            :support-libraries ["v13"] ;; needed for localbroadcast
+            :support-libraries ["v4"] ;; needed for localbroadcast
             :target-version "14"
             :aot-exclude-ns [clojure.parallel
                              clojure.core.reducers
