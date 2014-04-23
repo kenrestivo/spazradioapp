@@ -1,5 +1,6 @@
 *~
 *.class
+.nrepl-port
 *.dex
 *.apk
 bin/
