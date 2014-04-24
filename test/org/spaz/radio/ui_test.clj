@@ -35,4 +35,13 @@
                         :future
                         (remove #(-> % :url empty?))
                         second)))))
+
+  (debug/safe-for-ui
+   (let [ctx a]
+     (on-ui
+      (show-dialog ctx
+                   (->  @schedule/schedule
+                        :future
+                        first
+                        (assoc :url "spaz.org"))))))
   )

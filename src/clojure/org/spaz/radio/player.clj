@@ -148,12 +148,12 @@
                                 (fn [c _ _]
                                   (BitcoinIntegration/request ctx u))
                                 (fn [c _ _]
-                                  (->> u
-                                       .toString
-                                       (Intent. Intent/ACTION_VIEW)
-                                       (.startActivity ctx)
-                                       debug/safe-for-ui)))})))))
-               
+                                  (debug/safe-for-ui
+                                   (as-> u x
+                                         (Intent. Intent/ACTION_VIEW x)
+                                         (.startActivity ctx x)))))})))))
+
+
 
 
 
@@ -310,7 +310,7 @@
 
 (comment
 
-  
+
   
   )
 
