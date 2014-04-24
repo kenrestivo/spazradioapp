@@ -24,6 +24,7 @@
             [neko.ui :as ui :refer [make-ui]])
   (:import android.media.MediaPlayer
            android.content.ComponentName
+           android.graphics.Color
            android.net.Uri
            de.schildbach.wallet.integration.android.BitcoinIntegration
            android.content.Intent))
@@ -31,6 +32,7 @@
 
 
 (declare ^android.widget.LinearLayout playing-layout)
+(declare ^android.widget.LinearLayout show-layout)
 
 (declare stop-player) ;; because start-player needs it.
 
@@ -111,11 +113,8 @@
   [show]
   {:pre [(-> show nil? not)]}
   (let [{:keys [name url start_timestamp end_timestamp]} (utilza/munge-columns display-colfixes show)]
-    ;; TODO: return some kind of map maybe?
-    ;; TODO: maybe if there's an url, make the show clickable
-    ;; TODO: this really wants to be a custom horiz listview with the dates on the left
-    ;;       and the shows on the right, with the shows in a different font/color than the dates, etc.
-    (format "%s\n%s -\n%s" name start_timestamp end_timestamp)))
+    {:name name
+     :dates (format "%s -\n%s" start_timestamp end_timestamp)}))
 
 
 
@@ -152,17 +151,29 @@
                                    (.startActivity ctx (Intent. Intent/ACTION_VIEW u)))))})))))
 
 
-
+;; TODO: this really wants to be a custom horiz listview with the dates on the left
+(def show-layout-tree
+  [:linear-layout {:id-holder true
+                   :def `show-layout
+                   :orientation :vertical}
+   [:text-view {:id ::show-name
+                :text-color Color/YELLOW}]
+   [:text-view {:id ::show-dates
+                :text-color Color/WHITE}]])
 
 
 (defn schedule-adapter [activity]
   (adapters/ref-adapter
-   (fn [] [:text-view {}])
+   (fn [] show-layout-tree)
    (fn [_ view _ {:keys [url] :as show}]
-     (on-ui
-      (.setOnClickListener ^android.widget.TextView view
-                           (lview/on-click  (show-dialog activity show)))
-      (.setText ^android.widget.TextView view (format-show show))))
+     (let [{:keys [name dates]} (format-show show)]
+       (debug/safe-for-ui
+        (on-ui
+         (.setOnClickListener ^android.widget.TextView view
+                              (lview/on-click  (when-not (empty? url)
+                                                 (show-dialog activity show))))
+         (.setText ^android.widget.TextView (-> view .getTag  ::show-name) name)
+         (.setText ^android.widget.TextView (-> view .getTag  ::show-dates) dates)))))
    schedule/schedule
    #(or (:future %) [])))
 
