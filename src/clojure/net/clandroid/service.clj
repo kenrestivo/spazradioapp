@@ -27,6 +27,7 @@
 ;; 
 
 (ns net.clandroid.service
+  "Shamelessly copy/pasted from Nightweb http://github.com/oakes/Nightweb"
   (:require [neko.-utils :as utils])
   (:import [android.app Activity]))
 

@@ -7,8 +7,10 @@
             [neko.context :as context]
             [utilza.misc :as utilza]
             [neko.find-view :as view]
+            [utilza.android :as utildroid]
             [neko.listeners.view :as lview]
             [neko.ui.adapters :as adapters]
+            [neko.ui.menu :as menu]
             [neko.data :as data]
             [neko.doc :as doc]
             [neko.debug :as debug]
@@ -18,9 +20,12 @@
             [org.spaz.radio.utils :as utils]
             [org.spaz.radio.service :as service]
             [neko.log :as log]
+            [net.nightweb.dialogs :as dialogs]
             [neko.ui :as ui :refer [make-ui]])
   (:import android.media.MediaPlayer
            android.content.ComponentName
+           android.net.Uri
+           de.schildbach.wallet.integration.android.BitcoinIntegration
            android.content.Intent))
 
 
@@ -29,6 +34,13 @@
 
 (declare stop-player) ;; because start-player needs it.
 
+(defn safe-url
+  "Copy/pasted from utilza"
+  [^String s]
+  (let [u (Uri/parse s)]
+    (if (.getScheme u)
+      u
+      (recur (str "http://" s)))))
 
 
 (defn get-view
@@ -107,14 +119,56 @@
 
 
 
-(defn schedule-adapter []
+(defn show-dialog
+  [ctx show]
+  (let [{:keys [name url start_timestamp end_timestamp]} (utilza/munge-columns display-colfixes show)
+        u (safe-url url)
+        scheme (.getScheme u)]
+    (dialogs/show-dialog!
+     ctx
+     name
+     (make-ui ctx [:linear-layout {:orientation :vertical,
+                                   :id-holder true}
+                   [:linear-layout {:orientation :vertical
+                                    :layout-margin-left 16}
+                    [:text-view {:text (str "Starts: " start_timestamp)}]
+                    [:text-view {:text (str "Ends: " end_timestamp)}]
+                    (when (and (not (empty? url))
+                               (= scheme "bitcoin"))
+                      [:text-view {:text "Like the show? Got some BTC for the DJ?"
+                                   :horizontally-scrolling false
+                                   :layout-margin-top 16}])]])
+     (merge {:negative-name "Cancel"
+             :negative-func dialogs/cancel}
+            (when-not (empty? url)
+              {:positive-name (if (= scheme "bitcoin")
+                                "Donate"
+                                "More info")
+               :positive-func (if (= scheme "bitcoin")
+                                (fn [c _ _]
+                                  (BitcoinIntegration/request ctx u))
+                                (fn [c _ _]
+                                  (->> u
+                                       .toString
+                                       (Intent. Intent/ACTION_VIEW)
+                                       (.startActivity ctx)
+                                       debug/safe-for-ui)))})))))
+               
+
+
+
+(defn schedule-adapter [activity]
   (adapters/ref-adapter
    (fn [] [:text-view {}])
-   (fn [_ view _ show]
+   (fn [_ view _ {:keys [url] :as show}]
      (on-ui
+      (.setOnClickListener ^android.widget.TextView view
+                           (lview/on-click  (show-dialog activity show)))
       (.setText ^android.widget.TextView view (format-show show))))
    schedule/schedule
    #(or (:future %) [])))
+
+
 
 (def playing-layout* [:linear-layout {:orientation :vertical,
                                       :id-holder true,
@@ -122,12 +176,12 @@
                       [:text-view {:text "Now Playing:"}]
                       [:text-view {:text "checking..."
                                    :id ::playing-text
-                                   :single-line true}]
+                                   :horizontally-scrolling false}]
                       [:linear-layout {:orientation :horizontal}
                        [:button {:text "Configuring"
                                  :id ::playing-button}]
                        [:text-view {:text ""
-                                   :id  ::status-text}]]
+                                    :id  ::status-text}]]
                       [:text-view {:text "Upcoming Shows"
                                    :id ::upcoming-header}]
                       [:list-view {:id ::schedule}]])
@@ -145,9 +199,41 @@
         (.setText "Listen")))))
 
 
+(defn donate-btc
+  [ctx]
+  (BitcoinIntegration/request ctx (rand-nth utils/btc-donation-addresses)))
+
+(defn about-dialog
+  [ctx]
+  (dialogs/show-dialog!
+   ctx
+   "SPAZ Radio App"
+   (make-ui ctx [:linear-layout {:orientation :vertical,
+                                 :id-holder true}
+                 [:text-view {:text (let [{:keys [version-name version-number]}
+                                          (utildroid/get-version-info utils/package-name)]
+                                      (format "Version %s, build %d"
+                                              version-name version-number))
+                              :layout-margin-left 16
+                              :horizontally-scrolling false}]
+                 [:text-view {:text "Like the app? Got some BTC for the developer?"
+                              :layout-width :fill
+                              :layout-margin-left 16
+                              :layout-margin-top 16
+                              :layout-gravity :left}]]
+            )
+   {:negative-name "Cancel"
+    :negative-func dialogs/cancel
+    :positive-name "Donate"
+    :positive-func (fn [ctx v btn]
+                     (donate-btc ctx))}))
+
+
 
 (defactivity org.spaz.radio.Player
-  :state (atom {})
+  :state (atom {})  ;; when needed, (swap! (.state ctx) assoc k v)
+
+  :def a ;; used for debug in repl
   
   :on-create (fn [this bundle]
                (on-ui
@@ -163,7 +249,7 @@
                  (on-ui
                   (-> ::schedule
                       get-view
-                      (ui/config :adapter (schedule-adapter)))))
+                      (ui/config :adapter (schedule-adapter this)))))
                ;; it'll only get started once, so no need to check here
                (swap! utils/needs-alarm conj ::player)
                (services/start-service-unbound this utils/alarm-service-name))
@@ -182,8 +268,13 @@
                (add-watch playing/last-playing ::player refresh-playing)
                (add-watch media/status ::player refresh-status)
                (future (playing/playing!))
-               (future (schedule/update-schedule!))))
-
+               (future (schedule/update-schedule!)))
+  
+  :on-create-options-menu (fn [this menu]
+                            (menu/make-menu menu [[:item {:title "About"
+                                                          ;; :icon
+                                                          :show-as-action :if-room
+                                                          :on-click (fn [_] (about-dialog this))}]])))
 
 
 
@@ -219,9 +310,13 @@
 
 (comment
 
-
-
+  
+  
   )
+
+
+
+
 
 
 

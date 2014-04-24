@@ -21,6 +21,7 @@
 (defonce ^:const main-activity-signal "org.spaz.radio.MAIN")
 (defonce ^:const alarm-service-name "org.spaz.radio.AlarmService")
 (defonce ^:const player-service-name "org.spaz.radio.PlayerService")
+ (defonce btc-donation-addresses ["13fYkGohQYyvPVAp9RfX7k6ZPkPmJD2atU"])
 
 ;; THIS CANNOT BE A RESOURCE!
 (defonce ^:const playing-service-id 42) 
