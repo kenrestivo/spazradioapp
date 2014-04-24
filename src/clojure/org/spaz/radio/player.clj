@@ -149,9 +149,7 @@
                                   (BitcoinIntegration/request ctx u))
                                 (fn [c _ _]
                                   (debug/safe-for-ui
-                                   (as-> u x
-                                         (Intent. Intent/ACTION_VIEW x)
-                                         (.startActivity ctx x)))))})))))
+                                   (.startActivity ctx (Intent. Intent/ACTION_VIEW u)))))})))))
 
 
 

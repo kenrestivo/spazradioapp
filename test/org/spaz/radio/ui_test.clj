@@ -1,5 +1,7 @@
 (ns org.spaz.radio.ui-test
-  (:require             [neko.debug :as debug])
+  (:require             [neko.debug :as debug]
+                        [org.spaz.radio.schedule :as schedule]
+                        [neko.threading :as threading :refer [on-ui]])
   (:use clojure.test
         org.spaz.radio.player))
 
