@@ -89,7 +89,7 @@
 (defn start*
   [^MediaPlayer mp]
   (set-lock)
-  (reset! status (r/get-string :connecting))
+  (reset! status (str (r/get-string :connecting) "..."))
   (try
     (doto mp
       .reset ;; it doesn't hurt to be sure
