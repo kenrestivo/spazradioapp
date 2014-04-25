@@ -12,7 +12,7 @@
 
 
   <!-- Messages -->  
-  <string name="connecting_status">Connecting</string>
+  <string name="connecting">Connecting</string>
 
   <string name="starts_date">Starts</string>
   <string name="ends_date">Ends</string>
@@ -25,8 +25,8 @@
   <string name="buffering">Buffering</string>
   <string name="reconnected">Reconnected</string>
   <string name="connected">Connected</string>
-
-  <string name="disconnected_reconecting">Disconnected, reconnecting</string>
+  <string name="resyncing">Resyncing</string>
+    <string name="disconnected_reconecting">Disconnected, reconnecting</string>
   
   <string name="upcoming_shows">Upcoming Shows</string>
   

@@ -28,7 +28,7 @@
 
 (defonce last-pos (atom 0))
 
-(defonce status (atom ""))
+(defonce status (atom "Connecting...")) ;; TODO: use resources in an init function?
 
 (declare assure-mp start clear release-lock)
 
@@ -80,7 +80,8 @@
 (defn decode-error
   [i]
   (-> {MediaPlayer/MEDIA_INFO_BUFFERING_START   (str (r/get-string :buffering) "...")
-       MediaPlayer/MEDIA_INFO_BUFFERING_END  (r/get-string :reconnected)}
+       MediaPlayer/MEDIA_INFO_BUFFERING_END  (r/get-string :reconnected)
+       703  (r/get-string :resyncing)} ;; XXX undocumented, but i get it a lot
       (get i)))
 
 
@@ -88,6 +89,7 @@
 (defn start*
   [^MediaPlayer mp]
   (set-lock)
+  (reset! status (r/get-string :connecting))
   (try
     (doto mp
       .reset ;; it doesn't hurt to be sure
@@ -110,8 +112,8 @@
        (reify android.media.MediaPlayer$OnCompletionListener
          (onCompletion [this mp]
            (log/i "lost connection" (.getCurrentPosition mp))
-           (reset! status (str (r/get-string :disconnected_reconnecting) "..."))
            (clear)
+           (reset! status (str (r/get-string :disconnected_reconnecting) "..."))
            (start))))
       
       (.setOnSeekCompleteListener 
@@ -172,5 +174,7 @@
 
   (reset! datasource (str "http://" utils/fake-server ":8000/stream"))
   (reset! datasource (str "http://" utils/fake-server "/test.ogg"))
+
+  (add-watch status ::mon (fn [k r old new] (log/i old "-->" new))) 
   
   )

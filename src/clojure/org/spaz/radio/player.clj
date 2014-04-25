@@ -67,7 +67,7 @@
     (.setText (r/get-string :stop_button))
     utils/force-top-level-redraw
     (.setOnClickListener (lview/on-click-call (partial stop-player this))))
-  (set-text! ::status-text (str (r/get-string :connecting_status) "..."))
+  (set-text! ::status-text (str (r/get-string :connecting) "..."))
   (services/start-service-unbound this utils/player-service-name))
 
 
