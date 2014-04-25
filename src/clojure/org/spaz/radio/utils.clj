@@ -21,7 +21,7 @@
 (defonce ^:const main-activity-signal "org.spaz.radio.MAIN")
 (defonce ^:const alarm-service-name "org.spaz.radio.AlarmService")
 (defonce ^:const player-service-name "org.spaz.radio.PlayerService")
- (defonce btc-donation-addresses ["13fYkGohQYyvPVAp9RfX7k6ZPkPmJD2atU"])
+(defonce btc-donation-addresses ["13fYkGohQYyvPVAp9RfX7k6ZPkPmJD2atU"])
 
 ;; THIS CANNOT BE A RESOURCE!
 (defonce ^:const playing-service-id 42) 
@@ -51,7 +51,7 @@
 (defn notification
   [^android.content.Context context text]
   (notify/notification :icon (r/get-resource context :drawable :ic_launcher)
-                       :content-title "SPAZ Radio"
+                       :content-title (r/get-string :app_name)
                        :content-text text
                        ;; TODO: must also Intent.FLAG_ACTIVITY_NEW_TASK somehow
                        :action [:activity main-activity-signal]))
@@ -85,7 +85,7 @@
   (utilza/get-version-info package-name)
 
 
-    ;; for mocking
+  ;; for mocking
 
   (def fake-server "192.168.0.46")
   (def fake-server "192.168.43.169")

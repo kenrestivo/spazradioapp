@@ -1,6 +1,7 @@
 (ns org.spaz.radio.media
   (:require [neko.activity :as activity :refer [defactivity set-content-view!]]
             [neko.threading :as threading :refer [on-ui]]
+            [neko.resource :as r]
             [neko.notify :as notify]
             [neko.resource :as r]
             [neko.context :as context]
@@ -78,8 +79,8 @@
 
 (defn decode-error
   [i]
-  (-> {MediaPlayer/MEDIA_INFO_BUFFERING_START   "Buffering..."
-       MediaPlayer/MEDIA_INFO_BUFFERING_END  "Reconnected"}
+  (-> {MediaPlayer/MEDIA_INFO_BUFFERING_START   (str (r/get-string :buffering) "...")
+       MediaPlayer/MEDIA_INFO_BUFFERING_END  (r/get-string :reconnected)}
       (get i)))
 
 
@@ -94,7 +95,7 @@
        (reify android.media.MediaPlayer$OnPreparedListener
          (onPrepared [this mp]
            (log/i "prepared" (.getCurrentPosition mp))
-           (reset! status "Connected")
+           (reset! status (r/get-string :connected))
            (.setVolume mp 1.0 1.0)
            (setup-ducking)
            (.start mp))))
@@ -109,7 +110,7 @@
        (reify android.media.MediaPlayer$OnCompletionListener
          (onCompletion [this mp]
            (log/i "lost connection" (.getCurrentPosition mp))
-           (reset! status "Disconnected, reconnecting...")
+           (reset! status (str (r/get-string :disconnected_reconnecting) "..."))
            (clear)
            (start))))
       

@@ -64,10 +64,10 @@
 (defn start-player
   [^android.app.Activity this ^android.view.View v]
   (doto v
-    (.setText "Stop")
+    (.setText (r/get-string :stop_button))
     utils/force-top-level-redraw
     (.setOnClickListener (lview/on-click-call (partial stop-player this))))
-  (set-text! ::status-text "Connecting...")
+  (set-text! ::status-text (str (r/get-string :connecting_status) "..."))
   (services/start-service-unbound this utils/player-service-name))
 
 
@@ -75,7 +75,7 @@
 (defn stop-player
   [^android.app.Activity this ^android.view.View v]
   (doto v
-    (.setText "Listen")
+    (.setText (r/get-string :listen_button))
     utils/force-top-level-redraw
     (.setOnClickListener (lview/on-click-call (partial start-player this))))
   (set-text! ::status-text "")
@@ -130,19 +130,19 @@
                                    :id-holder true}
                    [:linear-layout {:orientation :vertical
                                     :layout-margin-left 16}
-                    [:text-view {:text (str "Starts: " start_timestamp)}]
-                    [:text-view {:text (str "Ends: " end_timestamp)}]
+                    [:text-view {:text (str (r/get-string :starts_date) ": " start_timestamp)}]
+                    [:text-view {:text (str (r/get-string :ends_date) ": " end_timestamp)}]
                     (when (and (not (empty? url))
                                (= scheme "bitcoin"))
-                      [:text-view {:text "Like the show? Got some BTC for the DJ?"
+                      [:text-view {:text (r/get-string :dj_donation_beg)
                                    :horizontally-scrolling false
                                    :layout-margin-top 16}])]])
-     (merge {:negative-name "Cancel"
+     (merge {:negative-name (r/get-string :cancel_button)
              :negative-func dialogs/cancel}
             (when-not (empty? url)
               {:positive-name (if (= scheme "bitcoin")
-                                "Donate"
-                                "More info")
+                                (r/get-string :donate_button)
+                                (r/get-string :more_info_button))
                :positive-func (if (= scheme "bitcoin")
                                 (fn [c _ _]
                                   (BitcoinIntegration/request ctx u))
@@ -178,21 +178,21 @@
    #(or (:future %) [])))
 
 
-
 (def playing-layout* [:linear-layout {:orientation :vertical,
                                       :id-holder true,
                                       :def `playing-layout}
-                      [:text-view {:text "Now Playing:"}]
-                      [:text-view {:text "checking..."
-                                   :id ::playing-text
+                      [:text-view {:id ::now-playing-text
+                                   :text :now-playing}]
+                      [:text-view {:id ::playing-text
+                                   :text :checking
                                    :horizontally-scrolling false}]
                       [:linear-layout {:orientation :horizontal}
-                       [:button {:text "Configuring"
-                                 :id ::playing-button}]
+                       [:button {:id ::playing-button
+                                 :text :configuring}]
                        [:text-view {:text ""
                                     :id  ::status-text}]]
-                      [:text-view {:text "Upcoming Shows"
-                                   :id ::upcoming-header}]
+                      [:text-view {:id ::upcoming-header
+                                   :text :upcoming-shows}]
                       [:list-view {:id ::schedule}]])
 
 
@@ -202,10 +202,10 @@
     (if (service/started?)
       (doto pb
         (.setOnClickListener (lview/on-click-call (partial stop-player this)))
-        (.setText "Stop"))
+        (.setText (r/get-string :stop_button)))
       (doto pb
         (.setOnClickListener (lview/on-click-call (partial start-player this)))
-        (.setText "Listen")))))
+        (.setText (r/get-string :listen_button))))))
 
 
 (defn donate-btc
@@ -216,24 +216,25 @@
   [ctx]
   (dialogs/show-dialog!
    ctx
-   "SPAZ Radio App"
+   (r/get-string :app_name)
    (make-ui ctx [:linear-layout {:orientation :vertical,
                                  :id-holder true}
                  [:text-view {:text (let [{:keys [version-name version-number]}
                                           (utildroid/get-version-info utils/package-name)]
-                                      (format "Version %s, build %d"
-                                              version-name version-number))
+                                      (format "%s %s, %s %d"
+                                              (r/get-string :version) version-name
+                                              (r/get-string :build) version-number))
                               :layout-margin-left 16
                               :horizontally-scrolling false}]
-                 [:text-view {:text "Like the app? Got some BTC for the developer?"
+                 [:text-view {:text (r/get-string :developer_donation_beg)
                               :layout-width :fill
                               :layout-margin-left 16
                               :layout-margin-top 16
                               :layout-gravity :left}]]
             )
-   {:negative-name "Cancel"
+   {:negative-name (r/get-string :cancel_button)
     :negative-func dialogs/cancel
-    :positive-name "Donate"
+    :positive-name (r/get-string :donate_button)
     :positive-func (fn [ctx v btn]
                      (donate-btc ctx))}))
 
@@ -280,8 +281,9 @@
                (future (schedule/update-schedule!)))
   
   :on-create-options-menu (fn [this menu]
-                            (menu/make-menu menu [[:item {:title "About"
-                                                          ;; :icon
+                            (menu/make-menu menu [[:item {;; TODO: figure out how to use resources for title
+                                                          :title "About" 
+                                                          ;; TODO: :icon
                                                           :show-as-action :if-room
                                                           :on-click (fn [_] (about-dialog this))}]])))
 

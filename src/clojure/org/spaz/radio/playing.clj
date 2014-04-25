@@ -9,7 +9,7 @@
             [neko.ui :as ui :refer [make-ui]]))
 
 
-(defonce last-playing (atom "checking..."))
+(defonce last-playing (atom "Checking..."))
 
 ;; TODO: move to settings
 (defonce playing-url (atom "http://spazradio.bamfic.com/playing"))
@@ -48,12 +48,12 @@
   (->> (select-keys m icy-keys)
        vals
        (interpose " · ")
-       (apply str "[LIVE!] ")))
+       (apply str "[" (r/get-string :live) "] ")))
 
 
 (defmethod formatp :archive
   [{:keys [title filename]}]
-  (some->> [(clean-title title) (clean-filename filename) "IT'S A MYSTERY!!! Listen and guess."]
+  (some->> [(clean-title title) (clean-filename filename) (r/get-string :mystery)]
            (filter (comp not empty?))
            first))
 
@@ -94,6 +94,11 @@
   []
   (swap! last-playing  playing))
 
+
+(defn init
+  "Stuff that has to happen at init time, with a context present"
+  []
+  (reset! last-playing (r/get-string :checking)))
 
 (comment
 

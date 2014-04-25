@@ -86,7 +86,7 @@
                parse-weekly)
        (catch Exception e
          (log/e e)
-         "formatting error, checking again...")))
+         (str (r/get-string :format_error) "..."))))
   ([]
      (fetch-schedule @schedule-url)))
 
