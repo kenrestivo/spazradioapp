@@ -58,7 +58,8 @@
                              utilza.json
                              utilza.zip
                              utilza.memdb.file
-                             utilza.java
+                             utilza.java ;; can i put this back now?
+                             utilza.java.joda
                              utilza.qrcode
                              utilza.postgres
                              utilza.ring]})
