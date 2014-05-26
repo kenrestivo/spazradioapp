@@ -26,8 +26,9 @@
           (clojure.string/split  #"/")
           last
           (clojure.string/split  #"\.")
-          butlast
+          first
           ((partial apply str))))
+
 
 (defn clean-title
   [title]
