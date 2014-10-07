@@ -1,4 +1,4 @@
-(defproject spazradio/spazradio "0.1.10"
+(defproject spazradio/spazradio "0.1.11"
   :description "Streaming SPAZ Radio"
   :url "http://spaz.org"
   :license {:name "Eclipse Public License"
