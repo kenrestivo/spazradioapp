@@ -14,6 +14,8 @@
 ;; can't use (r/string :checking) here because java.lang.ClassCastException: clojure.lang.Var$Unbound cannot be cast to android.content.Context
 (defonce last-playing (agent "Checking..." 
                              :error-mode :continue
+                             :validator (fn [v] (not (or (nil? v)
+                                                (= "" v))))
                              :error-handler error))
 ;; TODO: move to settings
 (defonce playing-url (atom "http://spazradio.bamfic.com/playing"))
@@ -32,7 +34,8 @@
             (json/decode true)
             :playing)
     (catch Exception e
-      (error e))))
+      (error e)
+      nil)))
 
 
 
@@ -46,14 +49,6 @@
 (defn playing!
   []
   (send-off last-playing  playing))
-
-
-(defn init
-  "Stuff that has to happen at init time, with a context present"
-  []
-  (set-validator! last-playing (fn [v] (and (not (nil? v))
-                                            (not= "" v))))
-  (send last-playing (fn [_] (r/get-string :checking))))
 
 
 
