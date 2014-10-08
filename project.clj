@@ -1,4 +1,4 @@
-(defproject spazradio/spazradio "0.1.11"
+(defproject spazradio/spazradio "0.1.12"
   :description "Streaming SPAZ Radio"
   :url "http://spaz.org"
   :license {:name "Eclipse Public License"
@@ -44,6 +44,9 @@
             :target-version "14"
             :aot-exclude-ns [clojure.parallel
                              clojure.core.reducers
+                             org.spaz.radio.playing-test
+                             org.spaz.radio.schedule-test
+                             org.spaz.radio.ui-test
                              ;; required just to cherrypick one lib from utilza
                              utilza.base32
                              utilza.noir.future

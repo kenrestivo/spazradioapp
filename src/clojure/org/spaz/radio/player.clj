@@ -56,7 +56,7 @@
   {:pre (keyword? k)}
   (on-ui
    (doto (get-view k)
-     (.setText s)
+     (.setText (str s))
      utils/force-top-level-redraw)))
 
 
