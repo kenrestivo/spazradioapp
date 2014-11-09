@@ -92,6 +92,9 @@
 
 
 
+;; if the program suspends and resumes,
+;; the last-started is stale, needs to be force-refreshed, by forcing it nil
+;; should do that when activity resumes!
 
 ;; ugly but it works
 (defn update-schedule-fn

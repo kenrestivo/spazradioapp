@@ -251,6 +251,7 @@
                      make-ui
                      (set-content-view! this))
                 (set-playing-button this))
+               (swap! schedule/schedule assoc-in [:last-started] nil)
                (add-watch playing/last-playing ::player refresh-playing)
                (add-watch media/status ::player refresh-status)
                (future (playing/playing!))
@@ -274,6 +275,7 @@
                   on-ui))
   
   :on-resume (fn [this]
+               (swap! schedule/schedule assoc-in [:last-started] nil)
                (swap! utils/needs-alarm conj ::player)
                (add-watch playing/last-playing ::player refresh-playing)
                (add-watch media/status ::player refresh-status)
