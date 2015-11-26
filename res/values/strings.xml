@@ -26,7 +26,7 @@
   <string name="reconnected">Reconnected</string>
   <string name="connected">Connected</string>
   <string name="resyncing">Resyncing</string>
-    <string name="disconnected_reconecting">Disconnected, reconnecting</string>
+  <string name="disconnected">Disconnected, reconnecting</string>
   
   <string name="upcoming_shows">Upcoming Shows</string>
   
@@ -38,9 +38,9 @@
 
   <string name="live">LIVE!</string>
   <string name="mystery">IT\'S A MYSTERY!!! Listen and guess.</string>
-<string name="format_error">formatting error, checking again</string>
+  <string name="format_error">formatting error, checking again</string>
   
-<!-- Menus  -->
+  <!-- Menus  -->
   <string name="about">About</string>
   
 </resources>

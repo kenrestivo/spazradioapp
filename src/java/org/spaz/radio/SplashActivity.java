@@ -2,24 +2,18 @@ package org.spaz.radio;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.util.Log;
-
-import clojure.lang.Symbol;
-import clojure.lang.Var;
-import clojure.lang.RT;
+import neko.App;
 
 import org.spaz.radio.R;
 
 public class SplashActivity extends Activity {
 
     private static boolean firstLaunch = true;
-    private static String TAG = "Splash";
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -28,7 +22,12 @@ public class SplashActivity extends Activity {
         if (firstLaunch) {
             firstLaunch = false;
             setupSplash();
-            loadClojure();
+            App.loadAsynchronously("org.spaz.radio.Player",
+                                   new Runnable() {
+                                       @Override
+                                       public void run() {
+                                           proceed();
+                                       }});
         } else {
             proceed();
         }
@@ -48,27 +47,5 @@ public class SplashActivity extends Activity {
     public void proceed() {
         startActivity(new Intent("org.spaz.radio.MAIN"));
         finish();
-    }
-
-    public void loadClojure() {
-        new Thread(new Runnable(){
-                @Override
-                public void run() {
-                    Symbol CLOJURE_MAIN = Symbol.intern("neko.init");
-                    Var REQUIRE = RT.var("clojure.core", "require");
-                    REQUIRE.invoke(CLOJURE_MAIN);
-
-                    Var INIT = RT.var("neko.init", "init");
-                    INIT.invoke(SplashActivity.this.getApplication());
-
-                    try {
-                        Class.forName("org.spaz.radio.Player");
-                    } catch (ClassNotFoundException e) {
-                        Log.e(TAG, "Failed loading Player", e);
-                    }
-
-                    proceed();
-                }
-            }).start();
     }
 }

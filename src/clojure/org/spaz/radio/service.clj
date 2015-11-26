@@ -1,5 +1,5 @@
 (ns org.spaz.radio.service
-  (:require [neko.activity :as activity :refer [defactivity set-content-view!]]
+  (:require [neko.activity :as activity :refer [ set-content-view!]]
             [neko.threading :as threading :refer [on-ui]]
             [neko.notify :as notify]
             [net.clandroid.service :as service]
@@ -60,7 +60,7 @@
                 (remove-watch playing/last-playing ::notification)
                 (swap! utils/needs-alarm disj ::service)
                 (->> [:broadcast utils/end-alarm-signal]
-                     notify/construct-pending-intent
+                     (notify/construct-pending-intent this)
                      .send) ;; have to use send not sendbroadcast?
                 (media/clear)
                 (service/stop-receiver this utils/end-service-signal))) 

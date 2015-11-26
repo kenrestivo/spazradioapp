@@ -1,5 +1,5 @@
 (ns org.spaz.radio.media
-  (:require [neko.activity :as activity :refer [defactivity set-content-view!]]
+  (:require [neko.activity :as activity :refer [ set-content-view!]]
             [neko.threading :as threading :refer [on-ui]]
             [neko.resource :as r]
             [neko.notify :as notify]
@@ -11,6 +11,7 @@
             [neko.ui :as ui :refer [make-ui]])
   (:import android.media.MediaPlayer
            android.media.AudioManager
+           neko.App
            android.os.PowerManager
            android.net.wifi.WifiManager
            android.net.wifi.WifiInfo
@@ -20,6 +21,7 @@
            java.io.PrintWriter
            android.net.wifi.SupplicantState))
 
+(r/import-all)
 
 (defonce mp (atom nil))
 
@@ -43,7 +45,7 @@
          (swap! wifi-lock
                 #(or %
                      (-> :wifi
-                         context/get-service
+                         context/get-service 
                          (.createWifiLock WifiManager/WIFI_MODE_FULL "SpazPlayerLock"))))))
     (catch Exception e
       (log/e "wifilock bug in google")
@@ -79,9 +81,9 @@
 
 (defn decode-error
   [i]
-  (-> {MediaPlayer/MEDIA_INFO_BUFFERING_START   (str (r/get-string :buffering) "...")
-       MediaPlayer/MEDIA_INFO_BUFFERING_END  (r/get-string :reconnected)
-       703  (r/get-string :resyncing)} ;; XXX undocumented, but i get it a lot
+  (-> {MediaPlayer/MEDIA_INFO_BUFFERING_START   (str (r/get-string R$string/buffering) "...")
+       MediaPlayer/MEDIA_INFO_BUFFERING_END  (r/get-string R$string/reconnected)
+       703  (r/get-string R$string/resyncing)} ;; XXX undocumented, but i get it a lot
       (get i)))
 
 
@@ -89,7 +91,7 @@
 (defn start*
   [^MediaPlayer mp]
   (set-lock)
-  (reset! status (str (r/get-string :connecting) "..."))
+  (reset! status (str (r/get-string R$string/connecting) "..."))
   (try
     (doto mp
       .reset ;; it doesn't hurt to be sure
@@ -97,7 +99,7 @@
        (reify android.media.MediaPlayer$OnPreparedListener
          (onPrepared [this mp]
            (log/i "prepared" (.getCurrentPosition mp))
-           (reset! status (r/get-string :connected))
+           (reset! status (r/get-string R$string/connected))
            (.setVolume mp 1.0 1.0)
            (setup-ducking)
            (.start mp))))
@@ -113,7 +115,7 @@
          (onCompletion [this mp]
            (log/i "lost connection" (.getCurrentPosition mp))
            (clear)
-           (reset! status (str (r/get-string :disconnected_reconnecting) "..."))
+           (reset! status (str (r/get-string R$string/disconnected) "..."))
            (start))))
       
       (.setOnSeekCompleteListener 
@@ -139,7 +141,7 @@
            false))) ;; let others handle it
 
       (.setAudioStreamType AudioManager/STREAM_MUSIC)
-      (.setWakeMode context/context  PowerManager/PARTIAL_WAKE_LOCK)
+      (.setWakeMode App/instance   PowerManager/PARTIAL_WAKE_LOCK)
       (.setDataSource  @datasource)
       .prepareAsync)
 
@@ -155,12 +157,11 @@
   "Returns the mp. Will reset it if it doesn't exist"
   []
   (or @mp (swap! mp (fn [mp] (or mp
-                                 (doto (MediaPlayer.)
+                                 (-> (MediaPlayer.)
                                    start*))))))
 
 
-(defn start []
-  (assure-mp))
+
 
 (defn clear []
   (when @mp
@@ -171,6 +172,12 @@
 
 (comment
 
+  (start)
+
+  (assure-mp)
+
+  (-> (MediaPlayer.)
+    start*)
 
   (reset! datasource (str "http://" utils/fake-server ":8000/stream"))
   (reset! datasource (str "http://" utils/fake-server "/test.ogg"))

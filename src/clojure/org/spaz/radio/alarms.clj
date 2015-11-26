@@ -1,29 +1,13 @@
 (ns org.spaz.radio.alarms
-  (:require [neko.activity :as activity :refer [defactivity set-content-view!]]
-            [neko.threading :as threading :refer [on-ui]]
-            [neko.notify :as notify]
-            [net.clandroid.service :as service]
-            [neko.resource :as r]
-            [neko.context :as context]
-            [neko.find-view :as view]
-            [utilza.android :as utilza]
-            [neko.listeners.view :as lview]
-            [neko.data :as data]
-            [neko.doc :as doc]
-            [neko.debug :as debug]
-            [org.spaz.radio.player :as player]
-            [org.spaz.radio.playing :as playing]
-            [org.spaz.radio.schedule :as schedule]
-            [org.spaz.radio.utils :as utils]
-            [neko.log :as log]
-            [neko.ui :as ui :refer [make-ui]])
-  (:import android.media.MediaPlayer
-           android.app.PendingIntent
-           android.os.Handler
-           android.os.HandlerThread
-           android.content.ComponentName
-           android.app.AlarmManager
-           android.content.Intent))
+  (:require  [org.spaz.radio.player :as player]
+             [org.spaz.radio.playing :as playing]
+             [net.clandroid.service :as service]
+             [org.spaz.radio.utils :as utils]
+             [neko.log :as log]
+             [utilza.android :as utilza]
+             [org.spaz.radio.schedule :as schedule])
+
+  )
 
 
 (def refresh-interval 30000)

@@ -1,5 +1,5 @@
 (ns org.spaz.radio.playing
-  (:require [neko.activity :as activity :refer [defactivity set-content-view!]]
+  (:require [neko.activity :as activity :refer [ set-content-view!]]
             [neko.threading :as threading :refer [on-ui]]
             [neko.resource :as r]
             [neko.context :as context]
@@ -8,15 +8,14 @@
             [neko.log :as log]
             [neko.ui :as ui :refer [make-ui]]))
 
-(def error
-  #(log/e %&)) ;; cough, hack.
+
 
 ;; can't use (r/string :checking) here because java.lang.ClassCastException: clojure.lang.Var$Unbound cannot be cast to android.content.Context
 (defonce last-playing (agent "Checking..." 
                              :error-mode :continue
                              :validator (fn [v] (not (or (nil? v)
                                                 (= "" v))))
-                             :error-handler error))
+                             :error-handler utils/warn))
 ;; TODO: move to settings
 (defonce playing-url (atom "http://spazradio.bamfic.com/playing"))
 
@@ -34,7 +33,7 @@
             (json/decode true)
             :playing)
     (catch Exception e
-      (error e)
+      (log/w e)
       nil)))
 
 

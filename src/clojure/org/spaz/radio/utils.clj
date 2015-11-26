@@ -1,5 +1,5 @@
 (ns org.spaz.radio.utils
-  (:require [neko.activity :as activity :refer [defactivity set-content-view!]]
+  (:require [neko.activity :as activity :refer [ set-content-view!]]
             [neko.threading :as threading :refer [on-ui]]
             [neko.context :as context]
             [neko.find-view :as view]
@@ -27,6 +27,8 @@
 (defonce ^:const playing-service-id 42) 
 
 
+(r/import-all)
+
 ;; this is here only because it has to be
 (defonce needs-alarm (atom #{}))
 
@@ -50,11 +52,11 @@
 
 (defn notification
   [^android.content.Context context text]
-  (notify/notification :icon (r/get-resource context :drawable :ic_launcher)
-                       :content-title (r/get-string :app_name)
-                       :content-text text
-                       ;; TODO: must also Intent.FLAG_ACTIVITY_NEW_TASK somehow
-                       :action [:activity main-activity-signal]))
+  (notify/notification {:icon  R$drawable/ic_launcher
+                        :content-title (r/get-string R$string/app_name)
+                        :content-text text
+                        ;; TODO: must also Intent.FLAG_ACTIVITY_NEW_TASK somehow
+                        :action [:activity main-activity-signal]}))
 
 
 (defn renotify
@@ -77,6 +79,14 @@
       .getParent
       .getParent
       .invalidate))
+
+
+(def error
+  #(log/e %&)) ;; cough, hack.
+
+(def warn
+  #(log/w %&)) ;; cough, hack.
+
 
 (comment
 

@@ -1,5 +1,5 @@
 (ns org.spaz.radio.schedule
-  (:require [neko.activity :as activity :refer [defactivity set-content-view!]]
+  (:require [neko.activity :as activity :refer [ set-content-view!]]
             [neko.threading :as threading :refer [on-ui]]
             [neko.resource :as r]
             [neko.context :as context]
@@ -13,9 +13,13 @@
             java.util.TimeZone))
 
 
-(defonce schedule (atom {:current []
-                         :future []
-                         :last-started nil}))
+(defonce schedule (agent {:current []
+                          :future []
+                          :last-started nil}
+                         :error-mode :continue
+                         :error-handler utils/warn
+                         :validator map?))
+
 
 ;; TODO: move to settings
 (defonce schedule-url (atom "http://spazradio.bamfic.com/api/week-info"))
@@ -85,7 +89,7 @@
                (json/decode true)
                parse-weekly)
        (catch Exception e
-         (log/e e)
+         (log/w e)
          (str (r/get-string :format_error) "..."))))
   ([]
      (fetch-schedule @schedule-url)))
@@ -103,22 +107,25 @@
    and goes out and fetches a new schedule if a new show has started since last check."
   [^java.lang.String url ^java.util.Date d]
   (fn [{:keys [last-started current future] :as old-sched}]
-    (let [{:keys [current future] :as new-sched} (->> (concat current future) ;; rejoining for resplitting
-                                                      (split-by-current d))
-          new-last-started (-> current last :start_timestamp)]
-      (-> (if (or (and last-started ;; could be nil if app just started up?
-                       (.after last-started new-last-started))
-                  (nil? last-started)) ;; nothing loaded yet, or no shows yet.
-            (or (some->> url fetch-schedule  (split-by-current d))
-                new-sched) ;; in case it fails
-            new-sched)
-          (assoc :last-started new-last-started)))))
+    (try
+      (let [{:keys [current future] :as new-sched} (->> (concat current future) ;; rejoining for resplitting
+                                                        (split-by-current d))
+            new-last-started (-> current last :start_timestamp)]
+        (-> (if (or (and last-started ;; could be nil if app just started up?
+                         (.after last-started new-last-started))
+                    (nil? last-started)) ;; nothing loaded yet, or no shows yet.
+              (or (some->> url fetch-schedule  (split-by-current d))
+                  new-sched) ;; in case it fails
+              new-sched)
+            (assoc :last-started new-last-started)))
+      (catch Exception e
+        (log/w e)))))
 
 
 
 (defn update-schedule!
   ([^java.lang.String url ^java.util.Date date]
-     (swap! schedule (update-schedule-fn url date)))
+     (send-off schedule (update-schedule-fn url date)))
   ([^java.lang.String url]
      (update-schedule! url (java.util.Date.)))
   ([]
