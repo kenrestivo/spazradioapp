@@ -63,8 +63,8 @@
   "Takes a current #inst, and a map of the schedule atom.
    Returns the updated schedule atom with the current and future updated for that time provided."
   [^java.util.Date d m]
-  (->> m
-       (group-by #(->> % :start_timestamp (.after d)))
+  (some->> m
+       (group-by #(some->> % :start_timestamp (.after d)))
        vals
        (zipmap [:current :future])))
 
