@@ -5,15 +5,18 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.0.0"
 
-  :plugins [[lein-droid "0.4.4-SNAPSHOT"]]
+  :plugins [[lein-droid "0.4.4-SNAPSHOT"
+             :exclusions [org.clojure/clojure]]]
   :source-paths ["src/clojure" "src"]
   :java-source-paths ["src/java" "gen"]
-  :dependencies [[org.clojure-android/clojure "1.7.0" :use-resources true]
-                 [neko/neko "4.0.0-alpha5"]
+  :dependencies [[org.clojure-android/clojure "1.7.0-r4" :use-resources true]
+                 [neko/neko "4.0.0-alpha5"
+                  :exclusions [org.clojure-android/clojure]]
                  [utilza "0.1.73"]
-                 [com.google.android/support-v4 "r7"]
+                 [com.android.support/support-v4 "21.0.0" :extension "aar"]
                  [cheshire "5.5.0"]]
   :javac-options ["-target" "1.7" "-source" "1.7" "-bootclasspath" "/opt/oracle/jdk1.7.0_09/lib/"]
+  :repositories  [["local-android" "file://usr/local/android/sdk-linux_x86/extras/android/m2repository/"]]
   :profiles {:default [:dev]
              :dev  [:android-common :android-user
                     {:target-path "target/debug"
@@ -67,8 +70,7 @@
 
             :aot-exclude-ns ["clojure.core.reducers"
                              "clojure.parallel"
-                             "cljs-tooling.util.analysis" 
-                             "cljs-tooling.util.misc"
+                             #"cljs-tooling\..+"
                              "cider.nrepl" 
                              "cider-nrepl.plugin"
                              "org.spaz.radio.playing-test"

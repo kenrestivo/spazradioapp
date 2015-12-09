@@ -29,7 +29,9 @@
 (ns net.clandroid.service
   "Shamelessly copy/pasted from Nightweb http://github.com/oakes/Nightweb"
   (:require [neko.-utils :as utils])
-  (:import [android.app Activity]))
+  (:import android.app.Activity
+            android.support.v4.content.LocalBroadcastManager
+            ))
 
 (defn start-service-unbound
   [^Activity context service-name]
@@ -37,7 +39,7 @@
   (->> (doto (android.content.Intent.)
          (.setClassName context service-name))
        (.startService context)))
-  
+
 (defn bind-service
   [^Activity context class-name connected]
   {:pre [(string? class-name)]}
@@ -80,7 +82,7 @@
 
 (defn start-local-receiver
   [^Activity context receiver-name func]
-  (-> (android.support.v4.content.LocalBroadcastManager/getInstance context)
+  (-> (LocalBroadcastManager/getInstance context)
       (start-receiver receiver-name func)))
 
 (defn stop-receiver
@@ -90,7 +92,7 @@
 
 (defn stop-local-receiver
   [^Activity context receiver-name]
-  (-> (android.support.v4.content.LocalBroadcastManager/getInstance context)
+  (-> (LocalBroadcastManager/getInstance context)
       (stop-receiver receiver-name)))
 
 (defn send-broadcast
@@ -102,7 +104,7 @@
 
 (defn send-local-broadcast
   [^Activity context params action-name]
-  (-> (android.support.v4.content.LocalBroadcastManager/getInstance context)
+  (-> (LocalBroadcastManager/getInstance context)
       (send-broadcast params action-name)))
 
 (defn start-foreground
