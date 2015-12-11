@@ -22,18 +22,13 @@
 
 
 ;; TODO: move to settings
-(defonce schedule-url (atom "http://spazradio.bamfic.com/api/week-info"))
-
-;; the server supplying the json with the schedule
-;; is assumed to always at least pretend to be on the west coast of the usa.
-(def read-df
-  (doto (SimpleDateFormat. "yyyy-MM-dd HH:mm", Locale/US)
-    (.setTimeZone (TimeZone/getTimeZone "America/Los_Angeles"))))
+(defonce schedule-url (atom "http://radio.spaz.org/spazradio.json"))
 
 
 (defn datefix
-  [^java.lang.String s]
-  (.parse read-df s))
+  [^java.lang.Long l]
+  (java.util.Date. l))
+
 
 (def colfixes {:start_timestamp datefix
                :end_timestamp datefix})
@@ -49,12 +44,8 @@
 
 
 (defn parse-weekly
-  "Takes vector of vectors of maps, outputs formatted, sorted schedule as seq of maps"
   [xs]
   (->> xs
-       vals
-       (filter vector?) ;; elimnate the api version, which is a string and in the way
-       (apply concat) ;; squash all the days together
        (map fix-record)
        (sort-by :start_timestamp)))
 
@@ -64,9 +55,10 @@
    Returns the updated schedule atom with the current and future updated for that time provided."
   [^java.util.Date d m]
   (some->> m
-       (group-by #(some->> % :start_timestamp (.after d)))
-       vals
-       (zipmap [:current :future])))
+           (group-by #(some->> % :start_timestamp (.after d)))
+           vals
+           reverse
+           (zipmap [:future :current])))
 
 
 ;; TODO: instead of getDefault, pull the locale out of android system settings
@@ -147,14 +139,32 @@
   
   (init-schedule!)
 
-  (reset! schedule {:current []
+  (send schedule (fn [_]
+                   {:current []
                     :future []
-                    :last-started nil})
+                    :last-started nil}))
   
   ;; check that the atom is being updated properly.
   (update-schedule!)
-
   
+
+  (reset! schedule-url "http://radio.spaz.org/spazradio.json")
+
+  (-> @schedule :future)
+  
+
+  (some->> @schedule-url
+           slurp
+           (#(json/decode % true))
+           parse-weekly)
+
+
+  (->> (select-keys @schedule [:current :future])
+       vals
+       (apply concat)
+       (split-by-current (java.util.Date.)))
+
+
   )
 
 
