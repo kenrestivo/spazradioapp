@@ -1,4 +1,4 @@
-(defproject spazradio/spazradio "0.1.13"
+(defproject spazradio/spazradio "0.1.7"
   :description "Streaming SPAZ Radio"
   :url "http://spaz.org/radio"
   :license {:name "Eclipse Public License"
@@ -41,6 +41,9 @@
              :lean
              [:release
               {:dependencies ^:replace [[org.skummet/clojure "1.7.0-r1"]
+                                        [utilza "0.1.73"]
+                                        [com.android.support/support-v4 "21.0.0" :extension "aar"]
+                                        [cheshire "5.5.0"]
                                         [neko/neko "4.0.0-alpha5"]]
                :exclusions [[org.clojure/clojure]
                             [org.clojure-android/clojure]]
