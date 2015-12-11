@@ -5,6 +5,7 @@
             [neko.activity :as activity :refer [defactivity set-content-view!]]
             [utilza.android :as utildroid]
             [org.spaz.radio.service :as service]
+            [org.spaz.radio.alarms :as alarm] ;; needed in order to get alarm class to resolve?
             [neko.ui.adapters :as adapters]
             [org.spaz.radio.playing :as playing]
             [neko.ui :as ui :refer [make-ui]]
@@ -134,7 +135,7 @@
      (let [{:keys [name dates]} (format-show show)]
        (debug/safe-for-ui
         (on-ui
-         (.setOnClickListener ^android.widget.TextView view
+         (.setOnClickListener ^android.widget.TextView (-> view .getTag  ::show-name)
                               (lview/on-click  (when-not (empty? url)
                                                  (show-dialog activity show))))
          (.setText ^android.widget.TextView (-> view .getTag  ::show-name) name)
@@ -271,6 +272,8 @@
         (ui/config :adapter (schedule-adapter (debug/*a))))))
 
 
+
+
   (debug/safe-for-ui
    (view/find-view (debug/*a) ::schedule))
 
@@ -283,6 +286,10 @@
   (set-text! (debug/*a) ::playing-text "yo yo yo")
 
   (service/started?)
+
+
+  (debug/safe-for-ui
+   (services/start-service-unbound (debug/*a) utils/alarm-service-name))
 
   )
 

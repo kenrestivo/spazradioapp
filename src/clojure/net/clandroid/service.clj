@@ -30,6 +30,7 @@
   "Shamelessly copy/pasted from Nightweb http://github.com/oakes/Nightweb"
   (:require [neko.-utils :as utils])
   (:import android.app.Activity
+           android.app.Service
             android.support.v4.content.LocalBroadcastManager
             ))
 
@@ -41,7 +42,7 @@
        (.startService context)))
 
 (defn bind-service
-  [^Activity context class-name connected]
+  [^Service context class-name connected]
   {:pre [(string? class-name)]}
   (let [intent (android.content.Intent.)
         connection (proxy [android.content.ServiceConnection] []
@@ -54,24 +55,24 @@
     connection))
 
 (defn unbind-service
-  [^Activity context connection]
+  [^Service context connection]
   (.unbindService context connection))
 
 (defn start-service
-  ([^Activity context service-name]
+  ([^Service context service-name]
      (start-service context service-name (fn [binder])))
-  ([^Activity context service-name on-connected]
+  ([^Service context service-name on-connected]
      (let [service (bind-service context service-name on-connected)]
        (swap! (.state context) assoc :service service))))
 
 (defn stop-service
-  [^Activity context]
+  [^Service context]
   (when-let [service (get @(.state context) :service)]
     (unbind-service context service)
     (swap! (.state context) dissoc :service))) ;; so it doesn't leak
 
 (defn start-receiver
-  [^Activity context receiver-name func]
+  [^android.app.Service context receiver-name func]
   (let [receiver (proxy [android.content.BroadcastReceiver] []
                    (onReceive [context intent]
                      (func context intent)))]
@@ -81,29 +82,29 @@
     (swap! (.state context) assoc receiver-name receiver)))
 
 (defn start-local-receiver
-  [^Activity context receiver-name func]
+  [^Service context receiver-name func]
   (-> (LocalBroadcastManager/getInstance context)
       (start-receiver receiver-name func)))
 
 (defn stop-receiver
-  [^Activity context receiver-name]
+  [^Service context receiver-name]
   (when-let [receiver (get @(.state context) receiver-name)]
     (.unregisterReceiver context receiver)))
 
 (defn stop-local-receiver
-  [^Activity context receiver-name]
+  [^Service context receiver-name]
   (-> (LocalBroadcastManager/getInstance context)
       (stop-receiver receiver-name)))
 
 (defn send-broadcast
-  [^Activity context params action-name]
+  [^Service context params action-name]
   (let [intent (android.content.Intent.)]
     (.putExtra intent "params" params)
     (.setAction intent action-name)
     (.sendBroadcast context intent)))
 
 (defn send-local-broadcast
-  [^Activity context params action-name]
+  [^Service context params action-name]
   (-> (LocalBroadcastManager/getInstance context)
       (send-broadcast params action-name)))
 

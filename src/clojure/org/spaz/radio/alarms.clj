@@ -1,13 +1,10 @@
 (ns org.spaz.radio.alarms
-  (:require  [org.spaz.radio.player :as player]
-             [org.spaz.radio.playing :as playing]
+  (:require  [org.spaz.radio.playing :as playing]
              [net.clandroid.service :as service]
              [org.spaz.radio.utils :as utils]
              [neko.log :as log]
              [utilza.android :as utilza]
-             [org.spaz.radio.schedule :as schedule])
-
-  )
+             [org.spaz.radio.schedule :as schedule]))
 
 
 (def refresh-interval 30000)
