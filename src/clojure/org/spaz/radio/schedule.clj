@@ -81,7 +81,8 @@
                (json/decode true)
                parse-weekly)
        (catch Exception e
-         (log/w e))))
+         (log/w e)
+         nil)))
   ([]
      (fetch-schedule @schedule-url)))
 
