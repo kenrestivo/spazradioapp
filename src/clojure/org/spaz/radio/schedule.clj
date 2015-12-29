@@ -81,8 +81,7 @@
                (json/decode true)
                parse-weekly)
        (catch Exception e
-         (log/w e)
-         (str (r/get-string :format_error) "..."))))
+         (log/w e))))
   ([]
      (fetch-schedule @schedule-url)))
 
