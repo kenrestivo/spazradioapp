@@ -26,7 +26,7 @@
 (defonce mp (atom nil))
 
 ;; TODO: move to settings
-(defonce datasource (atom "http://spazradio.bamfic.com:8050/radio-low.ogg"))
+(defonce datasource (atom "http://radio.spaz.org:8050/radio-low.ogg"))
 
 (defonce last-pos (atom 0))
 
