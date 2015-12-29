@@ -153,7 +153,7 @@
       (clear))))
 
 
-(defn assure-mp
+(defn start
   "Returns the mp. Will reset it if it doesn't exist"
   []
   (or @mp (swap! mp (fn [mp] (or mp
@@ -174,10 +174,10 @@
 
   (start)
 
-  (assure-mp)
-
   (-> (MediaPlayer.)
     start*)
+
+  (clear)
 
   (reset! datasource (str "http://" utils/fake-server ":8000/stream"))
   (reset! datasource (str "http://" utils/fake-server "/test.ogg"))
