@@ -12,8 +12,8 @@
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
 
   :plugins [[lein-droid "0.4.3"]]
-
-
+ 
+ 
   :dependencies [[org.clojure-android/clojure "1.7.0-r4" :use-resources true]
                  [neko/neko "4.0.0-alpha5"
                   :exclusions [org.clojure-android/clojure]]
@@ -69,7 +69,7 @@
             ;; :sdk-path "/home/user/path/to/android-sdk/"
 
             ;; to use the support library, massive bleah happens, unless you give it ram
-            :dex-opts ["-JXmx4096M" "--incremental" "--num-threads=6"]
+            :dex-opts ["-JXmx4096M" "--incremental" "--num-threads=8"]
 
             ;; If previous option didn't work, uncomment this as well.
             ;; :force-dex-optimize true
