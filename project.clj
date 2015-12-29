@@ -3,20 +3,24 @@
   :url "http://spaz.org/radio"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :min-lein-version "2.0.0"
+  :min-lein-version "2.5.0"
 
-  :plugins [[lein-droid "0.4.4-SNAPSHOT"
-             :exclusions [org.clojure/clojure]]]
+  :global-vars {*warn-on-reflection* true}
+
   :source-paths ["src/clojure" "src"]
-  :java-source-paths ["src/java" "gen"]
+  :java-source-paths ["src/java"]
+  :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
+
+  :plugins [[lein-droid "0.4.3"]]
+
+
   :dependencies [[org.clojure-android/clojure "1.7.0-r4" :use-resources true]
                  [neko/neko "4.0.0-alpha5"
                   :exclusions [org.clojure-android/clojure]]
                  [utilza "0.1.73"]
                  [com.android.support/support-v4 "21.0.0" :extension "aar"]
                  [cheshire "5.5.0"]]
-  :javac-options ["-target" "1.7" "-source" "1.7" "-bootclasspath" "/opt/oracle/jdk1.7.0_09/lib/"]
-  :repositories  [["local-android" "file://usr/local/android/sdk-linux_x86/extras/android/m2repository/"]]
+
   :profiles {:default [:dev]
              :dev  [:android-common :android-user
                     {:target-path "target/debug"
@@ -34,7 +38,10 @@
                :global-vars ^:replace {clojure.core/*warn-on-reflection* true}
                :android { 
                          :ignore-log-priority [:debug :verbose]
-                         :enable-dynamic-compilation true
+                         
+                         ;; is this trouble?
+                         ;;:enable-dynamic-compilation true
+
                          :aot :all
                          :build-type :release}}]
 
@@ -62,12 +69,12 @@
             ;; :sdk-path "/home/user/path/to/android-sdk/"
 
             ;; to use the support library, massive bleah happens, unless you give it ram
-            :dex-opts ["-JXmx4096M" "--incremental"]
+            :dex-opts ["-JXmx4096M" "--incremental" "--num-threads=6"]
 
             ;; If previous option didn't work, uncomment this as well.
             ;; :force-dex-optimize true
             
-            :target-version "14"
+            :target-version 18
 
             :manifest-options {:app-name "@string/app_name"}
 
