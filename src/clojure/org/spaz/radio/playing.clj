@@ -17,7 +17,7 @@
                                                 (= "" v))))
                              :error-handler utils/warn))
 ;; TODO: move to settings
-(defonce playing-url (atom "http://spazradio.bamfic.com/playing"))
+(defonce playing-url (atom "http://radio.spaz.org/playing"))
 
 
 (defonce playing-thread (atom nil))

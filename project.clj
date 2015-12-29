@@ -75,7 +75,7 @@
             ;; If previous option didn't work, uncomment this as well.
             ;; :force-dex-optimize true
             
-            :target-version 18
+            :target-version 15
 
             :manifest-options {:app-name "@string/app_name"}
 
