@@ -33,7 +33,7 @@
 (service/defservice org.spaz.radio.PlayerService
   :def player-service
   :on-start-command (fn [^android.app.Service this intent flags start-id]
-                      (log/i "service created!")
+                      (log/i "player service created!")
                       (when-not (= @status :started)
                         (service/start-foreground this  utils/playing-service-id
                                                   (utils/notification this @playing/last-playing))
@@ -54,7 +54,7 @@
                                                     (catch Exception e (log/e e)))))
                         (future (media/start))))
   :on-destroy (fn [^android.app.Service this]
-                (log/i "service destroyed")
+                (log/i "player service destroyed")
                 (.stopForeground this true) ;; redundant?
                 (reset! status :stopped)
                 (remove-watch playing/last-playing ::notification)

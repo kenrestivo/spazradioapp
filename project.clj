@@ -12,7 +12,8 @@
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
 
   :plugins [[lein-droid "0.4.3"]]
- 
+
+  :target-path "target"
  
   :dependencies [[org.clojure-android/clojure "1.7.0-r4" :use-resources true]
                  [neko/neko "4.0.0-alpha5"
