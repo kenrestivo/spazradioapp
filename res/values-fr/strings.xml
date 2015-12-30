@@ -37,7 +37,7 @@
   <string name="build">Gabarit</string>
 
   <string name="live">EN VIE!</string>
-  <string name="mystery">C'est un mystère. écouter et devine.</string>
+  <string name="mystery">C\'est un mystère. écouter et devine.</string>
   <string name="format_error">formatting error, checking again</string>
   
   <!-- Menus  -->
