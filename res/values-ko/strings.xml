@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="app_name">SPAZ 무선의</string>
+
+  <!-- Buttons -->
+  <string name="stop_button">서다</string>
+  <string name="listen_button">들어주다</string>
+  <string name="donate_button">기부하다</string>
+  <string name="more_info_button">통지</string>
+  <string name="cancel_button">취소</string>
+
+
+  <!-- Messages -->  
+  <string name="connecting">연결되다</string>
+
+  <string name="starts_date">출발점</string>
+  <string name="ends_date">종국</string>
+
+  <string name="now_playing">하다</string>
+
+  <string name="checking">수색</string>
+  <string name="configuring">구성</string>
+
+  <string name="buffering">Buffering</string>
+  <string name="reconnected">다시 연결</string>
+  <string name="connected">연속된</string>
+  <string name="resyncing">Resyncing</string>
+  <string name="disconnected">연결  다시 연결</string>
+  
+  <string name="upcoming_shows">다음의</string>
+  
+  <string name="dj_donation_beg">Like the show? Got some BTC for the DJ?</string>
+  <string name="developer_donation_beg">Like the app? Got some BTC for the developer?</string>
+
+  <string name="version">Version</string>
+  <string name="build">Build</string>
+
+  <string name="live">생중계로!</string>
+  <string name="mystery">그것은 미스테리. 듣고 추측</string>
+  <string name="format_error">formatting error, checking again</string>
+  
+  <!-- Menus  -->
+  <string name="about">통지</string>
+  
+</resources>

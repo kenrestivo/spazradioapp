@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="app_name">Radio SPAZ</string>
+
+  <!-- Buttons -->
+  <string name="stop_button">Fermare</string>
+  <string name="listen_button">Ascoltare</string>
+  <string name="donate_button">Donare</string>
+  <string name="more_info_button">Informazione</string>
+  <string name="cancel_button">Cancellare</string>
+
+
+  <!-- Messages -->  
+  <string name="connecting">Collegando</string>
+
+  <string name="starts_date">Inizio</string>
+  <string name="ends_date">Fine</string>
+
+  <string name="now_playing">Suonando</string>
+
+  <string name="checking">Cercando</string>
+  <string name="configuring">Configurando</string>
+
+  <string name="buffering">Buffering</string>
+  <string name="reconnected">Ricollegato</string>
+  <string name="connected">Collegato</string>
+  <string name="resyncing">Risincronizzazto</string>
+  <string name="disconnected">Scollegato, ricollegiando</string>
+  
+  <string name="upcoming_shows">Seguente</string>
+  
+  <string name="dj_donation_beg">Like the show? Got some BTC for the DJ?</string>
+  <string name="developer_donation_beg">Like the app? Got some BTC for the developer?</string>
+
+  <string name="version">Versione</string>
+  <string name="build">Fabbricare</string>
+
+  <string name="live">IN VIVO!</string>
+  <string name="mystery">è un mistero!!! Ascoltare e indovinare.</string>
+  <string name="format_error">formatting error, checking again</string>
+  
+  <!-- Menus  -->
+  <string name="about">Informazzione</string>
+  
+</resources>

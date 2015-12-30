@@ -147,7 +147,7 @@
 (def playing-layout [:linear-layout {:orientation :vertical,
                                      :id ::playing-layout}
                      [:text-view {:id ::now-playing-text
-                                  :text R$string/now_playing}]
+                                  :text (str R$string/now_playing ":")}]
                      [:text-view {:id ::playing-text
                                   :text R$string/checking
                                   :horizontally-scrolling false}]
