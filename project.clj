@@ -36,6 +36,8 @@
              :release
              [:android-common
               {:target-path "target/release"
+               :key-alias "kengoogleplay"
+               :keystore-path "/home/localkens/embed/droid/dev/ken-google-play.keystore"
                :global-vars ^:replace {clojure.core/*warn-on-reflection* true}
                :android { 
                          :ignore-log-priority [:debug :verbose]
