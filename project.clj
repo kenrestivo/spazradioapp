@@ -36,10 +36,10 @@
              :release
              [:android-common
               {:target-path "target/release"
-               :key-alias "kengoogleplay"
-               :keystore-path "/home/localkens/embed/droid/dev/ken-google-play.keystore"
                :global-vars ^:replace {clojure.core/*warn-on-reflection* true}
-               :android { 
+               :android {:use-debug-keystore false
+                         :key-alias "kengoogleplay"
+                         :keystore-path "/home/localkens/embed/droid/dev/ken-google-play.keystore"
                          :ignore-log-priority [:debug :verbose]
                          :aot :all
                          :build-type :release}}]
@@ -56,6 +56,7 @@
                :jvm-opts ["-Dclojure.compile.ignore-lean-classes=true"]
                :global-vars ^:replace {clojure.core/*warn-on-reflection* true}
                :android {:proguard-execute true
+                         :use-debug-keystore false
                          :proguard-conf-path "build/proguard-minify.cfg"
                          :lean-compile true
                          :skummet-skip-vars [;; You can list here var names that
