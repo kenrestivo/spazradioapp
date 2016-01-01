@@ -4,7 +4,9 @@ A radio listening app for the [SPAZ streaming radio station](http://spaz.org), w
 
 ## Obtaining
 
-You can download/run [the most recent binary release here](http://spaz.org/~ken/spazradio.apk).
+It's on the [Google Play Store here](https://play.google.com/store/apps/details?id=org.spaz.radio).
+
+Or, if you use Cyanogenmod or otherwise don't use Google Play, you can download/run [the most recent binary release here](http://spaz.org/~ken/spazradio.apk).
 
 ## Building
 
