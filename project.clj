@@ -55,8 +55,7 @@
                             [org.clojure-android/clojure]]
                :jvm-opts ["-Dclojure.compile.ignore-lean-classes=true"]
                :global-vars ^:replace {clojure.core/*warn-on-reflection* true}
-               :android {:use-debug-keystore true ;; wait, what? XXX no.
-                         :proguard-execute true
+               :android {:proguard-execute true
                          :proguard-conf-path "build/proguard-minify.cfg"
                          :lean-compile true
                          :skummet-skip-vars [;; You can list here var names that
