@@ -39,10 +39,6 @@
                :global-vars ^:replace {clojure.core/*warn-on-reflection* true}
                :android { 
                          :ignore-log-priority [:debug :verbose]
-                         
-                         ;; is this trouble?
-                         ;;:enable-dynamic-compilation true
-
                          :aot :all
                          :build-type :release}}]
 
