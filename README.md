@@ -18,7 +18,7 @@ See [lein-droid docs](https://github.com/clojure-android/lein-droid/wiki/Tutoria
 
 ## License
 
-Copyright © 2013-2014 ken restivo <ken@restivo.org>
+Copyright © 2013-2015 ken restivo <ken@restivo.org>
 
 Distributed under the Eclipse Public License, the same as Clojure.
 
