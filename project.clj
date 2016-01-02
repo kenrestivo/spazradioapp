@@ -1,4 +1,4 @@
-(defproject spazradio/spazradio "0.1.8"
+(defproject spazradio/spazradio "0.1.9"
   :description "Streaming SPAZ Radio"
   :url "http://spaz.org/radio"
   :license {:name "Eclipse Public License"
@@ -13,8 +13,8 @@
 
   :plugins [[lein-droid "0.4.3"]]
 
-  :target-path "target"
- 
+  :clean-targets [:target-path :compile-path "target/"]
+  
   :dependencies [[org.clojure-android/clojure "1.7.0-r4" :use-resources true]
                  [neko/neko "4.0.0-alpha5"
                   :exclusions [org.clojure-android/clojure]]
@@ -30,6 +30,7 @@
                                ;; The namespace of the app package - having a
                                ;; different one for dev and release allows you to
                                ;; install both at the same time.
+                               :target-version 14 ;; i prefer debugging on a faster old droid vm
                                :rename-manifest-package "org.spaz.radio.debug"
                                :manifest-options {:app-name "SPAZ Radio - debug"}
                                }}]

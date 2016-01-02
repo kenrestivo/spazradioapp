@@ -17,9 +17,9 @@
   <string name="starts_date">Starts</string>
   <string name="ends_date">Ends</string>
 
-  <string name="now_playing">Now Playing:</string>
+  <string name="now_playing">Now Playing</string>
 
-  <string name="checking">Checking...</string>
+  <string name="checking">Checking</string>
   <string name="configuring">Configuring</string>
 
   <string name="buffering">Buffering</string>

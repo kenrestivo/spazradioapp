@@ -144,21 +144,23 @@
    #(or (:future %) [])))
 
 
-(def playing-layout [:linear-layout {:orientation :vertical,
-                                     :id ::playing-layout}
-                     [:text-view {:id ::now-playing-text
-                                  :text (str R$string/now_playing ":")}]
-                     [:text-view {:id ::playing-text
-                                  :text R$string/checking
-                                  :horizontally-scrolling false}]
-                     [:linear-layout {:orientation :horizontal}
-                      [:button {:id ::playing-button
-                                :text R$string/configuring}]
-                      [:text-view {:text ""
-                                   :id  ::status-text}]]
-                     [:text-view {:id ::upcoming-header
-                                  :text R$string/upcoming_shows}]
-                     [:list-view {:id ::schedule}]])
+(defn playing-layout 
+  []
+  [:linear-layout {:orientation :vertical,
+                   :id ::playing-layout}
+   [:text-view {:id ::now-playing-text
+                :text (str (r/get-string R$string/now_playing) ": ")}]
+   [:text-view {:id ::playing-text
+                :text (str (r/get-string R$string/checking) "...")
+                :horizontally-scrolling false}]
+   [:linear-layout {:orientation :horizontal}
+    [:button {:id ::playing-button
+              :text (r/get-string R$string/configuring)}]
+    [:text-view {:text ""
+                 :id  ::status-text}]]
+   [:text-view {:id ::upcoming-header
+                :text (r/get-string R$string/upcoming_shows)}]
+   [:list-view {:id ::schedule}]])
 
 
 (defn set-playing-button
@@ -178,6 +180,14 @@
   (BitcoinIntegration/request ctx (rand-nth utils/btc-donation-addresses)))
 
 
+(defn version-str
+  [ctx]
+  (let [{:keys [version-name version-number]} (utildroid/get-version-info (.getPackageName ctx) ctx)]
+    (format "%s: %s, %s: %d" 
+            (r/get-string R$string/version)
+            version-name
+            (r/get-string R$string/build)
+            version-number)))
 
 (defn about-dialog
   [ctx]
@@ -189,7 +199,8 @@
      :positive-text (r/get-string R$string/donate_button)
      :positive-callback (fn [_ __]
                           (donate-btc ctx))
-     :message (r/get-string R$string/developer_donation_beg)})
+     :message (str (version-str ctx) "\n\n"
+                   (r/get-string R$string/developer_donation_beg))})
    .create
    .show))
 
@@ -199,7 +210,7 @@
   (onCreate [this bundle]
     (.superOnCreate this bundle)
     (on-ui
-     (set-content-view! this playing-layout)
+     (set-content-view! this (playing-layout))
      (set-playing-button this))
     (add-watch playing/last-playing ::player (partial refresh-playing this))
     (add-watch media/status ::player (partial refresh-status this))
@@ -224,6 +235,14 @@
          (notify/construct-pending-intent this)
          .send ;; have to use send not sendbroadcast?
          on-ui))
+
+  (onCreateOptionsMenu [this menu]
+    (.superOnCreateOptionsMenu this menu)
+    (menu/make-menu menu [[:item {:title "About"
+                                  ;; :icon
+                                  :show-as-action :if-room
+                                  :on-click (fn [_] (about-dialog this))}]])
+    true) ;; why true?
 
   (onResume [this]
     (.superOnResume this)
@@ -272,6 +291,8 @@
         (ui/config :adapter (schedule-adapter (debug/*a))))))
 
 
+  (utildroid/get-version-info (str utils/package-name ".debug") (debug/*a))
+
 
 
   (debug/safe-for-ui
@@ -290,6 +311,12 @@
 
   (debug/safe-for-ui
    (services/start-service-unbound (debug/*a) utils/alarm-service-name))
+
+
+  (version-str (debug/*a))
+
+
+
 
   )
 
