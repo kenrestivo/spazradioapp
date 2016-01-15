@@ -149,7 +149,7 @@
     (catch Exception e
       (log/e "error in start*")
       (.printStackTrace e)
-      ;; very important! reaase the kraken!
+      ;; very important! relaase the kraken!
       (clear))))
 
 
